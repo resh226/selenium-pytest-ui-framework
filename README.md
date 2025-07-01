@@ -21,10 +21,10 @@ This is a personal test automation project using **Python**, **Selenium**, and *
 
 my_first_seleniumpytest_project/
 ├── Pipfile
-├── Pipfile.lock
 ├── .gitignore
-├── tests/
-    └── test_search.py # Stubbed test case
+├── README.md
+└── tests/
+└── test_search.py # Stubbed test case
 
 ---
 
