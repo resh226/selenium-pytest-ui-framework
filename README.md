@@ -1,39 +1,82 @@
-## 🔄 Project Status
+🧪 my_first_seleniumpytest_project
+A beginner-friendly Selenium UI Automation Framework project built with Python and Pytest.
+This repository is part of a real-world QA portfolio to showcase hands-on skills in test automation.
 
-This project is currently **in progress**.
+🔄 Project Status
+This project is currently in progress, with basic framework setup complete and test logic under active development.
 
-✅ Initial environment setup is complete using:
-- `pipenv` for virtual environment and dependency management
-- `webdriver-manager` for automatic driver handling
+✅ Progress So Far
+✅ Initial Setup Completed:
 
-🛠️ Basic test scaffolding is present, and test logic will be added in the upcoming commits.
+pipenv used for virtual environment and dependency management
 
-## 📂 Project Structure (so far)
+webdriver-manager installed for automatic browser driver handling
 
-my_first_seleniumpytest_project/  
-├── Pipfile  
-├── Pipfile.lock  
-├── .gitignore  
-├── tests/  
-│   └── test_search.py  # Stubbed test case  
+Reusable browser fixture added in conftest.py for clean setup/teardown
+
+test_search.py updated to use the browser fixture
+
+✅ Page Object Model (POM) Implemented:
+
+Created pages/ folder as a Python package with __init__.py
+
+Added DuckDuckGoSearchPage (search.py) with methods: load() and search(phrase)
+
+Added DuckDuckGoResultPage (result.py) with methods: result_link_titles(), search_input_value(), and title()
+
+Locators written using By.ID and By.CSS_SELECTOR
+
+✅ Functional Test Implemented:
+
+test_search.py now:
+
+Initializes both page objects
+
+Executes a full search scenario
+
+Uses assertions to verify title, input value, and link text matches
+
+Utilizes list comprehension for result filtering and validation
+
+📂 Project Structure (current)
+bash
+Copy
+Edit
+my_first_seleniumpytest_project/
+├── Pipfile
+├── Pipfile.lock
+├── .gitignore
+├── pages/
+│   ├── __init__.py               # Declares the folder as a Python package
+│   ├── search.py                 # DuckDuckGoSearchPage implementation
+│   └── result.py                 # DuckDuckGoResultPage implementation
+├── tests/
+│   ├── conftest.py               # Contains browser fixture using WebDriver Manager
+│   └── test_search.py            # UI test using page objects and assertions
 └── README.md
+✅ Tech Stack
+Python 3.13
 
-## ✅ Tech Stack
+Selenium WebDriver
 
-- Python 3.13
-- Selenium WebDriver
-- Pytest
-- WebDriver Manager
-- Pipenv
-- PyCharm
+Pytest
 
-## 📌 To-Do (Planned Work)
+WebDriver Manager (for ChromeDriver)
 
-- [x] Environment setup with Pipenv
-- [x] WebDriver Manager installation
-- [ ] Add WebDriver setup and fixtures
-- [ ] Implement functional UI test cases
-- [ ] Organize project folder structure
-- [ ] Add `conftest.py` and configuration hooks
-- [ ] Integrate Allure Reports
+Pipenv
+
+PyCharm IDE
+
+📌 To-Do (Next Steps)
+⏳ Finalize TODOs in page object methods
+
+⏳ Parameterize test cases for different search phrases
+
+⏳ Organize test data and selectors as needed
+
+⏳ Integrate Allure Reports with test execution
+
+⏳ Add parallel execution support and command-line flexibility
+
+⏳ Expand test coverage with more DuckDuckGo search scenarios
 
