@@ -1,43 +1,39 @@
-# 🚧 Selenium Pytest Automation – Work in Progress
+## 🔄 Project Status
 
-This is a personal test automation project using **Python**, **Selenium**, and **Pytest**.
+This project is currently **in progress**.
 
-✅ Initial setup is complete using `pipenv`  
-🛠 Project structure, test logic, and WebDriver configuration are still in progress.
+✅ Initial environment setup is complete using:
+- `pipenv` for virtual environment and dependency management
+- `webdriver-manager` for automatic driver handling
 
----
+🛠️ Basic test scaffolding is present, and test logic will be added in the upcoming commits.
 
-## 📦 Tech Stack
+## 📂 Project Structure (so far)
+
+my_first_seleniumpytest_project/  
+├── Pipfile  
+├── Pipfile.lock  
+├── .gitignore  
+├── tests/  
+│   └── test_search.py  # Stubbed test case  
+└── README.md
+
+## ✅ Tech Stack
 
 - Python 3.13
-- Selenium
+- Selenium WebDriver
 - Pytest
+- WebDriver Manager
 - Pipenv
 - PyCharm
 
----
+## 📌 To-Do (Planned Work)
 
-## 📁 Current Files
+- [x] Environment setup with Pipenv
+- [x] WebDriver Manager installation
+- [ ] Add WebDriver setup and fixtures
+- [ ] Implement functional UI test cases
+- [ ] Organize project folder structure
+- [ ] Add `conftest.py` and configuration hooks
+- [ ] Integrate Allure Reports
 
-my_first_seleniumpytest_project/
-├── Pipfile
-├── .gitignore
-├── README.md
-└── tests/
-└── test_search.py # Stubbed test case
-
----
-
-## 🔄 To-Do
-
-- [ ] Add WebDriver setup
-- [ ] Implement actual test logic
-- [ ] Organize folder structure
-- [ ] Create conftest.py
-- [ ] Add reporting (e.g., Allure)
-
----
-
-## 📌 Note
-
-This project is in its early stages. More structure and features will be added soon.
