@@ -24,7 +24,7 @@ my_first_seleniumpytest_project/
 ├── Pipfile.lock
 ├── .gitignore
 ├── tests/
-│ └── test_search.py # Stubbed test case
+    └── test_search.py # Stubbed test case
 
 ---
 
