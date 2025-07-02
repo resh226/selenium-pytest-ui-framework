@@ -96,3 +96,9 @@ my_first_seleniumpytest_project/
 - ⏳ Integrate Allure Reports with test execution  
 - ⏳ Add parallel execution support and command-line flexibility  
 - ⏳ Expand test coverage with more DuckDuckGo search scenarios  
+
+
+🙋‍♀️ About Me
+Reshma Sajeev🧪 ISTQB Certified | ✅ Postman Student Expert 🔗 https://www.linkedin.com/in/reshma-sajeev-889b7215b/
+⭐ This repository is part of my personal QA portfolio to demonstrate hands-on experience in Selenium UI Automation using Python and Pytest
+
