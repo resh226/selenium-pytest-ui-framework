@@ -45,5 +45,3 @@ def test_basic_duckduckgo_search(browser):
     # Assert that at least one matching title exists
     assert len(matches) > 0
 
-    # TEMPORARY: This line forces the test to fail until it's fully implemented
-    raise Exception("Incomplete Test")
