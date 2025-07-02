@@ -38,21 +38,23 @@ This project is currently in progress, with basic framework setup complete and t
 
 ---
 
-## 📂 Project Structure (current)
+📂 Project Structure (current)
 
+```
 my_first_seleniumpytest_project/
 ├── Pipfile
+├── Pipfile.lock
 ├── .gitignore
 ├── pages/
-│ ├── init.py # Declares the folder as a Python package
-│ ├── search.py # DuckDuckGoSearchPage implementation
-│ └── result.py # DuckDuckGoResultPage implementation
+│   ├── __init__.py               # Declares the folder as a Python package
+│   ├── search.py                 # DuckDuckGoSearchPage implementation
+│   └── result.py                 # DuckDuckGoResultPage implementation
 ├── tests/
-│ ├── conftest.py # Contains browser fixture using WebDriver Manager
-│ └── test_search.py # UI test using page objects and assertions
+│   ├── conftest.py               # Contains browser fixture using WebDriver Manager
+│   └── test_search.py            # UI test using page objects and assertions
 └── README.md
 
-
+```
 ---
 
 ## ✅ Tech Stack
