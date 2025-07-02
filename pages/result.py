@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 
 class DuckDuckGoResultPage:
 
-    #locators
+    #locators.
     result_titles = (By.CSS_SELECTOR, 'a.result__a')
     search_input = (By.ID, 'search_form_input')
 
