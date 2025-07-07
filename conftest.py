@@ -6,6 +6,8 @@ import os
 
 import pytest                  # Pytest is used for writing test cases and fixtures
 import selenium.webdriver      # Selenium WebDriver API
+import requests
+import time
 
 from utils.file_utils import FileUtils  # importing file_utils.py to use helper functions to read json data fron file
 
@@ -16,10 +18,28 @@ from webdriver_manager.chrome import ChromeDriverManager # Auto-downloads Chrome
 # For Firefox browser automation
 from selenium.webdriver.firefox.service import Service as FirefoxService # Manages ChromeDriver service
 from webdriver_manager.firefox import GeckoDriverManager # Auto-downloads ChromeDriver
+#---------------------------------------------------------------------------------
+# Wait for Selenium Grid to be ready(when run from github)
+def wait_for_grid():
+    grid_url = "http://selenium-hub:4444/wd/hub/status"
+    print("🔄 Checking Selenium Grid readiness...")
+    for i in range(10):  # Try for ~50 seconds (10 attempts * 5s)
+        try:
+            response = requests.get(grid_url)
+            if response.status_code == 200 and response.json()["value"]["ready"]:
+                print("✅ Selenium Grid is ready!")
+                return
+        except Exception as e:
+            print(f"⏳ Waiting for Selenium Grid... attempt {i+1}")
+        time.sleep(5)
+    raise Exception("❌ Selenium Grid was not ready after waiting 50 seconds.")
 
+# Run before any test session
+@pytest.fixture(scope="session", autouse=True)
+def grid_check():
+    wait_for_grid()
 
-
-# ---------------------------
+# --------------------------------------------------------------------------------------------------------
 # CONFIG FIXTURE
 # ---------------------------
 
