@@ -79,6 +79,7 @@ def test_basic_duckduckgo_search(browser, config, phrase):
     titles = DuckDuckGoResultPage(browser).result_link_titles()
     matches = [t for t in titles if phrase.lower() in t.lower()]
     assert len(matches) > 0, f"No search results contain the phrase '{phrase}'."
+    assert matches, f"No search result titles contained the phrase '{phrase}'. Found: {titles}"
     logger.info("Verified at least one result link contains the phrase.")
 
     logger.info("Test for search phrase '%s' completed successfully.", phrase)

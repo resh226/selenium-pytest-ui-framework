@@ -32,7 +32,7 @@ class DuckDuckGoSearchPage(BasePage):
     @allure.step("Wait for search results to load")
     def search_result_wait(self):
         # WAIT: Ensure results have loaded
-        WaitUtils.wait_for_element_visible(self.browser, Loc.SEARCH_RESULTS,60)
+        WaitUtils.wait_for_element_visible(self.browser, Loc.SEARCH_RESULTS,90)
 
     @allure.step("Wait for long query search results to load")
     def search_result_long_query_wait(self):
