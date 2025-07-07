@@ -1,19 +1,6 @@
-# ------------------------------------------------------------------------------
-# Dockerfile
-# ------------------------------------------------------------------------------
-# Description:
-#   - Builds a Docker image for Selenium Pytest automation framework
-#   - Installs Python dependencies and browser drivers
-#   - Supports headless/non-headless mode via environment variable
-#   - Saves screenshots and Allure results to bind-mounted reports folder
-#
-# Usage:
-#   docker build -t selenium-pytest-ui:latest .
-#   docker run -e HEADLESS=true selenium-pytest-ui
-#
-# Part of Flow:
-#   GitHub → Jenkins → Docker → Selenium Grid → Tests → Allure Reports
-# ------------------------------------------------------------------------------
+# Dockerfile for Selenium Pytest Automation
+# Builds Docker image with all dependencies
+# Supports headless/non-headless mode
 
 # Base image: lightweight Python 3.11
 FROM python:3.11-slim
@@ -33,7 +20,7 @@ RUN apt-get update && \
         wget unzip curl \
         chromium-driver firefox-esr \
         xvfb libnss3 libgconf-2-4 libxi6 \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy Python dependencies and install
 COPY requirements.txt .
@@ -41,6 +28,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project files into container
 COPY . .
+
+# Create reports directories to avoid permission issues
+RUN mkdir -p /app/reports/allure-results /app/reports/screenshots
 
 # Set display port for headless execution
 ENV DISPLAY=:99
