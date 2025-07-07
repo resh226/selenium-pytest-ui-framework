@@ -50,4 +50,5 @@ services:
     volumes:
       - ./reports:/app/reports         # Bind mount for reports (host ↔ container)
     user: root                         # Run container as root (needed in GitHub Actions)
-    command: pytest --alluredir=/app/reports/allure-results --headless
+    command: pytest --alluredir=/app/reports/allure-results
+
