@@ -1,0 +1,82 @@
+# ------------------------------------------------------------------------------
+# ci.yml (GitHub Actions Workflow)
+# ------------------------------------------------------------------------------
+# Description:
+#   - CI/CD pipeline for Selenium Pytest UI Framework
+#   - Runs Docker Compose to execute Selenium Grid + Tests
+#   - Uploads Allure reports and screenshots as artifacts
+#   - Sends Email notifications on job success or failure
+# ------------------------------------------------------------------------------
+
+name: Selenium Pytest CI
+
+on:
+  push:       # Trigger on push to main branch
+    branches:
+      - main
+  pull_request:  # Trigger on pull requests too
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # Use GitHub's Ubuntu runner with Docker pre-installed
+
+    steps:
+    # ----------------------------------------
+    # Step 1: Checkout code from GitHub
+    # ----------------------------------------
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # ----------------------------------------
+    # Step 2: Set up Docker Compose
+    # ----------------------------------------
+    - name: Set up Docker Compose
+      run: docker-compose --version
+
+    # ----------------------------------------
+    # Step 3: Build and Run Selenium Tests
+    # ----------------------------------------
+    - name: Build and Run Docker Compose
+      run: docker-compose up --abort-on-container-exit
+
+    # ----------------------------------------
+    # Step 4: Archive Allure Results
+    # ----------------------------------------
+    - name: Upload Allure Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-results
+        path: reports/allure-results/
+
+    # ----------------------------------------
+    # Step 5: Archive Screenshots
+    # ----------------------------------------
+    - name: Upload Screenshots
+      uses: actions/upload-artifact@v4
+      with:
+        name: screenshots
+        path: reports/screenshots/
+
+    # ----------------------------------------
+    # Step 6: Send Email Notification
+    # ----------------------------------------
+    - name: Send Email Notification
+      uses: dawidd6/action-send-mail@v4
+      if: always()  # Send email on success or failure
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}  # Set in repo secrets
+        password: ${{ secrets.EMAIL_PASSWORD }}  # Set in repo secrets
+        subject: Selenium Pytest CI - ${{ job.status }}
+        to: reshma.sajeevpulickal@gmail.com
+        from: Selenium CI <reshma.sajeevpulickal@gmail.com>
+        body: |
+          Hello Reshma 👋,
+
+          Your Selenium Pytest CI workflow has completed with status: **${{ job.status }}**.
+
+          You can download the Allure Report and Screenshots from the GitHub Actions run artifacts.
+
+          Regards,
+          GitHub Actions Bot
