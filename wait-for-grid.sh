@@ -2,14 +2,16 @@
 # -----------------------------------------------------------------------------
 # wait-for-grid.sh
 # -----------------------------------------------------------------------------
-# Waits for Selenium Grid to become ready, then runs pytest tests
+# Waits for Selenium Grid Hub and Nodes to be ready, then runs pytest tests
 # -----------------------------------------------------------------------------
 
-echo "🔄 Waiting for Selenium Grid at $GRID_URL..."
+GRID_STATUS_URL="http://selenium-hub:4444/status"
+
+echo "🔄 Waiting for Selenium Grid at $GRID_STATUS_URL..."
 
 # Increase wait attempts: 60 attempts × 5s = 5 minutes total
 for i in {1..60}; do
-    if curl -s "$GRID_URL/status" | grep '"ready":true' > /dev/null; then
+    if curl -s "$GRID_STATUS_URL" | grep '"ready":true' > /dev/null; then
         echo "✅ Selenium Grid is ready!"
         break
     fi

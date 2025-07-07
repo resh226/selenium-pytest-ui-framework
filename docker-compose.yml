@@ -13,7 +13,7 @@ services:
     ports:
       - "4444:4444"
     healthcheck:  # 🟢 Ensure Grid is healthy before nodes depend on it
-      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      test: ["CMD", "curl", "-f", "http://localhost:4444/status"]
       interval: 10s
       timeout: 5s
       retries: 15
@@ -49,7 +49,7 @@ services:
       - chrome
       - firefox
     environment:
-      - GRID_URL=http://selenium-hub:4444/wd/hub
+      - GRID_URL=http://selenium-hub:4444  # 🔥 Removed /wd/hub from the end
       - HEADLESS=true
     volumes:
       - ./reports:/app/reports
