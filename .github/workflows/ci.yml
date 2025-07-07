@@ -119,20 +119,20 @@ jobs:
         path: reports/screenshots/
 
     # ----------------------------------------
-    # Step 10: Send Email Notification
+    # Step 10: Send Email Notification (Updated for Gmail)
     # ----------------------------------------
     - name: Send Email Notification
       if: always() # Send email regardless of success/failure
-      uses: dawidd6/action-send-mail@v4
+      uses: dawidd6/action-send-mail@v3
       with:
-        server_address: smtp.yourprovider.com
+        server_address: smtp.gmail.com
         server_port: 587
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
         subject: Selenium Pytest CI - ${{ job.status }}
         body: |
           Hi Reshma,
-          
+
           The Selenium Pytest CI workflow has completed.
           ✅ Status: ${{ job.status }}
           📦 Repository: ${{ github.repository }}
