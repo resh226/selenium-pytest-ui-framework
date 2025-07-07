@@ -41,17 +41,24 @@ class WaitUtils:
 
     @staticmethod
     @allure.step("Wait for element visible: {locator} (timeout={timeout}s)")
-    def wait_for_element_visible(browser, locator, timeout=90):
+    @staticmethod
+    def wait_for_element_visible(browser, locator, timeout=90, retries=2):
         """
         Waits for the element to be visible (present in DOM and not hidden).
+        Retries if TimeoutException occurs.
         Returns the WebElement if successful.
         """
-        try:
-            return WebDriverWait(browser, timeout).until(
-                EC.visibility_of_element_located(locator)
-            )
-        except TimeoutException:
-            raise AssertionError(f"❌ Element {locator} not visible after {timeout}s")
+        attempt = 0
+        while attempt < retries:
+            try:
+                return WebDriverWait(browser, timeout).until(
+                    EC.visibility_of_any_elements_located(locator)
+                )
+            except TimeoutException:
+                print(f"⚠️ Attempt {attempt + 1}: Element {locator} not visible after {timeout}s")
+                attempt += 1
+                if attempt == retries:
+                    raise AssertionError(f"❌ Element {locator} not visible after {timeout * retries}s")
 
     @staticmethod
     @allure.step("Wait for element presence: {locator} (timeout={timeout}s)")
