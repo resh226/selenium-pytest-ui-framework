@@ -1,54 +1,50 @@
 # ------------------------------------------------------------------------------
 # docker-compose.yml
 # ------------------------------------------------------------------------------
-# Description:
-#   - Defines services for Selenium Grid and your test automation
-#   - Used by Docker Compose to spin up multiple containers
-#   - Compatible with GitHub Actions (cloud) and Jenkins (local/cloud)
+# Spins up Selenium Grid and the tests container
 # ------------------------------------------------------------------------------
 
 version: "3.8"
 
 services:
-  selenium-hub:  # Central Hub for Selenium Grid
+  selenium-hub:
     image: selenium/hub:4.19.1
     container_name: selenium-hub
     ports:
-      - "4444:4444"  # Expose Selenium Grid UI at http://localhost:4444
+      - "4444:4444"  # Grid UI: http://localhost:4444
 
-  chrome:  # Chrome Node for Selenium Grid
+  chrome:
     image: selenium/node-chrome:4.19.1
     depends_on:
       - selenium-hub
-    volumes:
-      - /dev/shm:/dev/shm  # Shared memory to prevent Chrome crashes
     environment:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    volumes:
+      - /dev/shm:/dev/shm  # Prevent Chrome crashes
 
-  firefox:  # Firefox Node for Selenium Grid
+  firefox:
     image: selenium/node-firefox:4.19.1
     depends_on:
       - selenium-hub
-    volumes:
-      - /dev/shm:/dev/shm
     environment:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    volumes:
+      - /dev/shm:/dev/shm
 
-  tests:  # Your automation test container
-    build: .  # Build Dockerfile from current directory
+  tests:
+    build: .  # Build Dockerfile in current dir
     depends_on:
       - selenium-hub
       - chrome
       - firefox
     environment:
-      - HUB_HOST=selenium-hub          # Tell tests where the Grid Hub is
-      - HEADLESS=true                  # Run headless in cloud
+      - GRID_URL=http://selenium-hub:4444/wd/hub  # Grid URL for RemoteWebDriver
+      - HEADLESS=true                             # Enable headless in Docker
     volumes:
-      - ./reports:/app/reports         # Bind mount for reports (host ↔ container)
-    user: root                         # Run container as root (needed in GitHub Actions)
+      - ./reports:/app/reports                    # Mount reports to host
+    user: root                                    # Required for CI environments
     command: pytest --alluredir=/app/reports/allure-results
-
