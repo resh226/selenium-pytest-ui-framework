@@ -1,6 +1,6 @@
 """
-This module contains shared fixtures for pytest
-✅ Works locally and in Docker/Selenium Grid
+Shared fixtures for pytest
+✅ Supports Local and Selenium Grid
 ✅ Captures screenshots on test pass/fail
 """
 
@@ -12,8 +12,11 @@ from datetime import datetime
 from utils.file_utils import FileUtils
 
 from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 from webdriver_manager.chrome import ChromeDriverManager
+
 from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from webdriver_manager.firefox import GeckoDriverManager
 
 # -----------------------------------------------------------------------------
@@ -35,32 +38,36 @@ def config():
 def browser(config):
     browser_type = config['browser']
     wait_time = config['implicit_wait']
-    grid_url = os.getenv("GRID_URL", "http://selenium-hub:4444/wd/hub")
+    grid_url = os.getenv("GRID_URL", "http://selenium-hub:4444")
     is_grid = bool(os.getenv("GRID_URL"))
 
     print(f"🌐 Running on {'Selenium Grid' if is_grid else 'Local WebDriver'}")
 
     if is_grid:
         if browser_type == 'Chrome':
-            capabilities = selenium.webdriver.DesiredCapabilities.CHROME.copy()
+            options = ChromeOptions()
+            capabilities = options.to_capabilities()
         elif browser_type == 'Firefox':
-            capabilities = selenium.webdriver.DesiredCapabilities.FIREFOX.copy()
+            options = FirefoxOptions()
+            capabilities = options.to_capabilities()
         else:
             raise ValueError(f"Unsupported browser for Grid: {browser_type}")
 
         b = selenium.webdriver.Remote(
             command_executor=grid_url,
-            desired_capabilities=capabilities
+            options=options
         )
     else:
         if browser_type == 'Chrome':
+            options = ChromeOptions()
             service = ChromeService(ChromeDriverManager().install())
-            b = selenium.webdriver.Chrome(service=service)
+            b = selenium.webdriver.Chrome(service=service, options=options)
         elif browser_type == 'Firefox':
+            options = FirefoxOptions()
             service = FirefoxService(GeckoDriverManager().install())
-            b = selenium.webdriver.Firefox(service=service)
+            b = selenium.webdriver.Firefox(service=service, options=options)
         elif browser_type == 'Headless Chrome':
-            options = selenium.webdriver.ChromeOptions()
+            options = ChromeOptions()
             options.add_argument("--headless=new")
             options.add_argument("--disable-gpu")
             options.add_argument("--no-sandbox")
