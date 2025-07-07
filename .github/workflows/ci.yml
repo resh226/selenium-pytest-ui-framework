@@ -67,14 +67,17 @@ jobs:
       run: docker compose exec tests pytest
 
     # ----------------------------------------
-    # Step 6.1: Install Allure CLI
+    # Step 6.1: Install Allure CLI (Updated)
     # ----------------------------------------
     - name: Install Allure CLI
       if: always() # Run even if tests fail
       run: |
-        sudo apt-add-repository ppa:qameta/allure -y
-        sudo apt-get update
-        sudo apt-get install allure -y
+        echo "⬇️ Downloading Allure CLI..."
+        curl -L -o allure-2.27.0.tgz https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+        tar -zxvf allure-2.27.0.tgz
+        sudo mv allure-2.27.0 /opt/allure
+        sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+        allure --version
 
     # ----------------------------------------
     # Step 6.2: Generate Allure HTML Report
@@ -120,7 +123,7 @@ jobs:
     # ----------------------------------------
     - name: Send Email Notification
       if: always() # Send email regardless of success/failure
-      uses: dawidd6/action-send-mail@v3
+      uses: dawidd6/action-send-mail@v4
       with:
         server_address: smtp.yourprovider.com
         server_port: 587
