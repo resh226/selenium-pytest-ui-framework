@@ -7,8 +7,6 @@ This module contains shared fixtures for pytest
 import os
 import pytest
 import selenium.webdriver
-import requests
-import time
 import allure
 from datetime import datetime
 from utils.file_utils import FileUtils
@@ -17,28 +15,6 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
-
-# -----------------------------------------------------------------------------
-# Wait for Selenium Grid readiness
-# -----------------------------------------------------------------------------
-def wait_for_grid():
-    grid_url = os.getenv("GRID_URL", "http://selenium-hub:4444/wd/hub/status")
-    print("🔄 Checking Selenium Grid readiness at:", grid_url)
-    for i in range(10):
-        try:
-            response = requests.get(grid_url)
-            if response.status_code == 200 and response.json()["value"]["ready"]:
-                print("✅ Selenium Grid is ready!")
-                return
-        except Exception:
-            print(f"⏳ Waiting for Selenium Grid... attempt {i+1}")
-        time.sleep(5)
-    raise Exception("❌ Selenium Grid was not ready after waiting 50 seconds.")
-
-@pytest.fixture(scope="session", autouse=True)
-def grid_check():
-    if os.getenv("GRID_URL"):
-        wait_for_grid()
 
 # -----------------------------------------------------------------------------
 # CONFIG FIXTURE
@@ -65,7 +41,6 @@ def browser(config):
     print(f"🌐 Running on {'Selenium Grid' if is_grid else 'Local WebDriver'}")
 
     if is_grid:
-        # Selenium Grid
         if browser_type == 'Chrome':
             capabilities = selenium.webdriver.DesiredCapabilities.CHROME.copy()
         elif browser_type == 'Firefox':
@@ -78,7 +53,6 @@ def browser(config):
             desired_capabilities=capabilities
         )
     else:
-        # Local
         if browser_type == 'Chrome':
             service = ChromeService(ChromeDriverManager().install())
             b = selenium.webdriver.Chrome(service=service)

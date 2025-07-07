@@ -1,7 +1,8 @@
 # ------------------------------------------------------------------------------
 # docker-compose.yml
 # ------------------------------------------------------------------------------
-# Spins up Selenium Grid and the tests container
+# Spins up Selenium Grid and test automation container
+# Includes GRID_URL for RemoteWebDriver
 # ------------------------------------------------------------------------------
 
 version: "3.8"
@@ -11,7 +12,7 @@ services:
     image: selenium/hub:4.19.1
     container_name: selenium-hub
     ports:
-      - "4444:4444"  # Grid UI: http://localhost:4444
+      - "4444:4444"
 
   chrome:
     image: selenium/node-chrome:4.19.1
@@ -22,7 +23,7 @@ services:
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
     volumes:
-      - /dev/shm:/dev/shm  # Prevent Chrome crashes
+      - /dev/shm:/dev/shm
 
   firefox:
     image: selenium/node-firefox:4.19.1
@@ -36,15 +37,14 @@ services:
       - /dev/shm:/dev/shm
 
   tests:
-    build: .  # Build Dockerfile in current dir
+    build: .
     depends_on:
       - selenium-hub
       - chrome
       - firefox
     environment:
-      - GRID_URL=http://selenium-hub:4444/wd/hub  # Grid URL for RemoteWebDriver
-      - HEADLESS=true                             # Enable headless in Docker
+      - GRID_URL=http://selenium-hub:4444/wd/hub
+      - HEADLESS=true
     volumes:
-      - ./reports:/app/reports                    # Mount reports to host
-    user: root                                    # Required for CI environments
-    command: pytest --alluredir=/app/reports/allure-results
+      - ./reports:/app/reports
+    user: root
