@@ -21,7 +21,7 @@ env/
 .vscode/            # VSCode settings
 
 # -------------------------------
-# Pipenv files (use locally only)
+# Pipenv files (local only)
 # -------------------------------
 Pipfile
 Pipfile.lock
