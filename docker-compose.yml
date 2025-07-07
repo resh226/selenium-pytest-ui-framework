@@ -26,6 +26,7 @@ services:
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
       - SE_NODE_MAX_SESSIONS=1  # 🔥 Faster startup
+      - SE_NODE_SESSION_TIMEOUT=300  # 🕒 Allow sessions up to 5 minutes
     volumes:
       - /dev/shm:/dev/shm
 
