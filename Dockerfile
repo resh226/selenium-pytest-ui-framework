@@ -23,4 +23,4 @@ RUN mkdir -p /app/reports/allure-results /app/reports/screenshots
 
 ENV DISPLAY=:99
 
-CMD ["pytest", "--alluredir=/app/reports/allure-results", "--headless"]
+CMD ["pytest", "--alluredir=/app/reports/allure-results"]
