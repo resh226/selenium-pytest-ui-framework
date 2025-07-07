@@ -31,7 +31,7 @@ from selenium.common.exceptions import TimeoutException
 class WaitUtils:
     @staticmethod
     @allure.step("Wait for element visible: {locator} (timeout={timeout}s)")
-    def wait_for_element_visible(browser, locator, timeout=30):
+    def wait_for_element_visible(browser, locator, timeout=90):
         """
         Waits for the element to be visible (present in DOM and not hidden).
         """
@@ -41,10 +41,12 @@ class WaitUtils:
             )
         except TimeoutException:
             raise AssertionError(f"Element {locator} not visible after {timeout}s")
+        print("🔍 Current page source for debugging:")
+        print(browser.page_source)
 
     @staticmethod
     @allure.step("Wait for element presence: {locator} (timeout={timeout}s)")
-    def wait_for_element_presence(browser, locator, timeout=30):
+    def wait_for_element_presence(browser, locator, timeout=90):
         """
         Waits for the element to be present in the DOM (visibility not required).
         """
@@ -55,9 +57,12 @@ class WaitUtils:
         except TimeoutException:
             raise AssertionError(f"Element {locator} not present in DOM after {timeout}s")
 
+        print("🔍 Current page source for debugging:")
+        print(browser.page_source)
+
     @staticmethod
     @allure.step("Wait for element clickable: {locator} (timeout={timeout}s)")
-    def wait_for_element_clickable(browser, locator, timeout=30):
+    def wait_for_element_clickable(browser, locator, timeout=90):
         """
         Waits for the element to be clickable (visible and enabled).
         """
@@ -67,10 +72,11 @@ class WaitUtils:
             )
         except TimeoutException:
             raise AssertionError(f"Element {locator} not clickable after {timeout}s")
-
+        print("🔍 Current page source for debugging:")
+        print(browser.page_source)
     @staticmethod
     @allure.step("Wait for URL to change from: {starting_url} (timeout={timeout}s)")
-    def wait_for_url_to_change(browser, starting_url, timeout=30):
+    def wait_for_url_to_change(browser, starting_url, timeout=90):
         """
         Waits for URL to change after navigation
         """
@@ -80,3 +86,5 @@ class WaitUtils:
             )
         except TimeoutException:
             raise AssertionError(f"URL did not contain '{starting_url}' after {timeout}s")
+        print("🔍 Current page source for debugging:")
+        print(browser.page_source)

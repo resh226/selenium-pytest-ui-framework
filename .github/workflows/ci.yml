@@ -1,88 +1,80 @@
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Selenium Pytest CI Workflow
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Description:
-#   - This GitHub Actions workflow runs on push or pull request.
-#   - It builds your Docker image, starts Selenium Grid via Docker Compose,
-#     runs UI tests (headless), uploads artifacts, and sends an email notification.
-#   - Compatible with Docker Compose v2 (docker compose CLI)
-# ------------------------------------------------------------------------------
+#   - Builds Docker image, runs tests on Selenium Grid
+#   - Always uploads Allure results, screenshots, and HTML report as artifacts
+# -----------------------------------------------------------------------------
 
 name: Selenium Pytest CI
 
-# When to run this workflow
 on:
-  push:       # Trigger on any push to 'main' branch
+  push:
     branches:
       - main
-  pull_request:  # Also run for pull requests targeting 'main'
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-test:  # Name of the CI job
-    runs-on: ubuntu-latest  # Use GitHub’s Ubuntu runner with Docker pre-installed
+  build-and-test:
+    runs-on: ubuntu-latest
 
     steps:
     # ----------------------------------------
-    # Step 1: Checkout code from GitHub repo
+    # Step 1: Checkout Code
     # ----------------------------------------
     - name: Checkout Code
       uses: actions/checkout@v4
-      # This pulls your repo files into the GitHub Actions runner workspace
 
     # ----------------------------------------
-    # Step 2: Verify Docker Compose availability
+    # Step 2: Set up Docker Compose
     # ----------------------------------------
     - name: Set up Docker Compose
       run: docker compose version
-      # Check that Docker Compose v2 is installed (uses 'docker compose' CLI)
 
     # ----------------------------------------
     # Step 3: Build and Run Selenium Tests
     # ----------------------------------------
     - name: Build and Run Selenium Tests
       run: docker compose up --abort-on-container-exit
-      # Build your Docker image and run Docker Compose services
-      # Stops all containers when the 'tests' service finishes
 
     # ----------------------------------------
-    # Step 4: Upload Allure Results
+    # Step 4: Generate Allure HTML Report
+    # ----------------------------------------
+    - name: Generate Allure HTML Report
+      if: always() # Run even if tests fail
+      run: |
+        pip install allure-pytest
+        mkdir -p reports/allure-report
+        allure generate reports/allure-results -o reports/allure-report --clean || echo "Allure generation failed"
+
+    # ----------------------------------------
+    # Step 5: Upload Allure Results (Raw)
     # ----------------------------------------
     - name: Upload Allure Results
+      if: always() # Run even if tests fail
       uses: actions/upload-artifact@v4
       with:
         name: allure-results
         path: reports/allure-results/
-      # Archives the Allure results folder as a downloadable artifact
 
     # ----------------------------------------
-    # Step 5: Upload Screenshots
+    # Step 6: Upload Allure HTML Report
+    # ----------------------------------------
+    - name: Upload Allure HTML Report
+      if: always() # Run even if tests fail
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report
+        path: reports/allure-report/
+
+    # ----------------------------------------
+    # Step 7: Upload Screenshots
     # ----------------------------------------
     - name: Upload Screenshots
+      if: always() # Run even if tests fail
       uses: actions/upload-artifact@v4
       with:
         name: screenshots
         path: reports/screenshots/
-      # Archives the screenshots folder (failed/passed screenshots)
-
-    # ----------------------------------------
-    # Step 6: Send Email Notification
-    # ----------------------------------------
-    - name: Send Email Notification
-      uses: dawidd6/action-send-mail@v4
-      if: always()  # Ensures email is sent even if tests fail
-      with:
-        server_address: smtp.gmail.com
-        server_port: 587
-        username: ${{ secrets.EMAIL_USERNAME }}  # GitHub Secret
-        password: ${{ secrets.EMAIL_PASSWORD }}  # GitHub Secret
-        subject: Selenium Pytest CI - ${{ job.status }}
-        to: reshma.sajeevpulickal@gmail.com
-        from: Selenium CI <reshma.sajeevpulickal@gmail.com>
-        body: |
-          Hello Reshma 👋,
-          
-          Your Selenium Pytest CI workflow has finished with status: **${{ job.status }}**.
-          
-          ✅ Allure Results and 📸 Screenshots are available in the workflow artifacts.
-          
-          🚀 Keep rocking your SDET journey!

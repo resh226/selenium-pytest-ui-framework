@@ -42,14 +42,20 @@ def browser(config):
     is_grid = bool(os.getenv("GRID_URL"))
 
     print(f"🌐 Running on {'Selenium Grid' if is_grid else 'Local WebDriver'}")
-
     if is_grid:
         if browser_type == 'Chrome':
             options = ChromeOptions()
-            capabilities = options.to_capabilities()
+            options.add_argument("--headless=new")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--window-size=1920,1080")
         elif browser_type == 'Firefox':
             options = FirefoxOptions()
-            capabilities = options.to_capabilities()
+            options.add_argument("--headless")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--width=1920")
+            options.add_argument("--height=1080")
         else:
             raise ValueError(f"Unsupported browser for Grid: {browser_type}")
 
