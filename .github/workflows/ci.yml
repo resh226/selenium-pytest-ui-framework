@@ -80,13 +80,13 @@ jobs:
         allure --version
 
     # ----------------------------------------
-    # Step 6.2: Generate Allure HTML Report
+    # Step 6.2: Generate Allure HTML Report (Updated)
     # ----------------------------------------
     - name: Generate Allure HTML Report
       if: always() # Run even if tests fail
       run: |
-        mkdir -p reports/allure-report
-        allure generate reports/allure-results -o reports/allure-report --clean || echo "⚠️ Allure generation failed"
+        sudo mkdir -p reports/allure-report
+        sudo allure generate reports/allure-results -o reports/allure-report --clean || echo "⚠️ Allure generation failed"
 
     # ----------------------------------------
     # Step 7: Upload Allure Results (Raw XML)
