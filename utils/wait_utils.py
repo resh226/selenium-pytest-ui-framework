@@ -26,8 +26,11 @@ WaitUtils.wait_for_url_to_change(browser, starting_url)
 
 # Wait for title to contain text
 WaitUtils.wait_for_title_contains(browser, "Welcome")
-"""
 
+#Wait for search input to contain: '{text}'
+wait_for_input_contains(browser, locator, text, timeout=10):
+
+"""
 import allure
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -104,3 +107,17 @@ class WaitUtils:
             )
         except TimeoutException:
             raise AssertionError(f"❌ Page title did not contain '{text}' after {timeout}s")
+
+    @staticmethod
+    @allure.step("Wait for search input to contain: '{text}' (timeout={timeout}s)")
+    def wait_for_input_contains(browser, locator, text, timeout=10):
+        """
+        Wait until the input field's value contains the given text.
+        """
+        try:
+            WebDriverWait(browser, timeout).until(
+                lambda d: text.lower() in d.find_element(*locator).get_attribute('value').lower(),
+                message=f"Timed out waiting for input to contain '{text}'"
+            )
+        except TimeoutException:
+            raise AssertionError(f"❌ Input field did not contain '{text}' after {timeout}s")

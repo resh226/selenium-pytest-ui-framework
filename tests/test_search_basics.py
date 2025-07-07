@@ -17,6 +17,9 @@ from pages.search import DuckDuckGoSearchPage
 from utils.file_utils import FileUtils
 from utils.wait_utils import WaitUtils  # <-- NEW: import our wait utility
 
+#import locator
+from locators.result_locators import DuckDuckGoResultLocators as Loc
+
 # setup for logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -63,10 +66,13 @@ def test_basic_duckduckgo_search(browser, config, phrase):
         f"Expected phrase '{phrase}' in page title, got '{actual_title}'"
     logger.info("Verified page title contains the phrase.")
 
-    # AND: Verify the search input still contains the search phrase
+    # WAIT: Ensure search input contains search phrase
+    WaitUtils.wait_for_input_contains(browser, Loc.SEARCH_INPUT, phrase, timeout=30)
+
     actual_input = DuckDuckGoResultPage(browser).search_input_value()
+    # AND: Verify the search input still contains the search phrase
     assert phrase.lower() in actual_input.lower(), \
-        "Search input does not retain the search phrase."
+        f"Expected '{phrase}' in search input, but got '{actual_input}'"
     logger.info("Verified search input retains the phrase.")
 
     # AND: Verify result links contain the search phrase
