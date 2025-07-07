@@ -12,8 +12,8 @@ services:
     container_name: selenium-hub
     ports:
       - "4444:4444"
-    healthcheck:  # 🟢 Ensure Grid is healthy before nodes depend on it
-      test: ["CMD", "curl", "-f", "http://localhost:4444/status"]
+    healthcheck:  # 🟢 Ensure Grid API is ready before nodes/tests depend on it
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
       interval: 10s
       timeout: 5s
       retries: 15
@@ -21,35 +21,40 @@ services:
   chrome:
     image: selenium/node-chrome:4.19.1
     depends_on:
-      - selenium-hub
+      selenium-hub:
+        condition: service_healthy
     environment:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-      - SE_NODE_MAX_SESSIONS=1  # 🔥 Faster startup with 1 session per node
+      - SE_NODE_MAX_SESSIONS=1  # 🔥 Faster startup
     volumes:
       - /dev/shm:/dev/shm
 
   firefox:
     image: selenium/node-firefox:4.19.1
     depends_on:
-      - selenium-hub
+      selenium-hub:
+        condition: service_healthy
     environment:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-      - SE_NODE_MAX_SESSIONS=1  # 🔥 Faster startup with 1 session per node
+      - SE_NODE_MAX_SESSIONS=1  # 🔥 Faster startup
     volumes:
       - /dev/shm:/dev/shm
 
   tests:
     build: .
     depends_on:
-      - selenium-hub
-      - chrome
-      - firefox
+      selenium-hub:
+        condition: service_healthy
+      chrome:
+        condition: service_started
+      firefox:
+        condition: service_started
     environment:
-      - GRID_URL=http://selenium-hub:4444  # 🔥 Removed /wd/hub from the end
+      - GRID_URL=http://selenium-hub:4444  # 🔥 Removed /wd/hub (Selenium 4 doesn’t need it)
       - HEADLESS=true
     volumes:
       - ./reports:/app/reports
