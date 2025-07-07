@@ -2,7 +2,6 @@
 # docker-compose.yml
 # ------------------------------------------------------------------------------
 # Spins up Selenium Grid and test automation container
-# Includes GRID_URL for RemoteWebDriver
 # ------------------------------------------------------------------------------
 
 version: "3.8"
@@ -13,6 +12,11 @@ services:
     container_name: selenium-hub
     ports:
       - "4444:4444"
+    healthcheck:  # 🟢 Ensure Grid is healthy before nodes depend on it
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
 
   chrome:
     image: selenium/node-chrome:4.19.1
@@ -22,6 +26,7 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=1  # 🔥 Faster startup with 1 session per node
     volumes:
       - /dev/shm:/dev/shm
 
@@ -33,6 +38,7 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=1  # 🔥 Faster startup with 1 session per node
     volumes:
       - /dev/shm:/dev/shm
 
