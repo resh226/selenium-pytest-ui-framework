@@ -14,6 +14,7 @@ from utils.file_utils import FileUtils
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import WebDriverException
 
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
@@ -119,5 +120,10 @@ def pytest_runtest_makereport(item, call):
                     attachment_type=allure.attachment_type.PNG
                 )
                 print(f"📸 Screenshot saved: {screenshot_path} (Test {report.outcome.upper()})")
+            except WebDriverException as e:
+                if "invalid session id" in str(e).lower():
+                    print("⚠️ Browser session ended before screenshot could be taken.")
+                else:
+                    print(f"⚠️ Could not save screenshot: {e}")
             except Exception as e:
-                print(f"⚠️ Could not save screenshot: {e}")
+                print(f"⚠️ Unexpected error saving screenshot: {e}")
