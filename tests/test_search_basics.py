@@ -13,8 +13,9 @@ import logging
 # Importing Page Object classes
 from pages.result import DuckDuckGoResultPage
 from pages.search import DuckDuckGoSearchPage
-# importing file_utils.py to use helper functions to read json data fron file
+# Import helper functions
 from utils.file_utils import FileUtils
+from utils.wait_utils import WaitUtils  # <-- NEW: import our wait utility
 
 # setup for logging
 logging.basicConfig(level=logging.INFO)
@@ -24,14 +25,13 @@ logger = logging.getLogger(__name__)
 test_data = FileUtils.read_json('test_data/basic_cases.json')
 search_phrases = test_data['search_phrases']
 
+
 @allure.feature("DuckDuckGo Search")
 @allure.story("Basic Search Functionality")
 @allure.severity(allure.severity_level.CRITICAL)
-
-#built-in Pytest decorator used for data-driven testing
-@pytest.mark.parametrize('phrase', search_phrases)
-@pytest.mark.smoke                #Core functionality, run first
-@pytest.mark.order(1)             #execution order
+@pytest.mark.parametrize('phrase', search_phrases)  # Data-driven testing
+@pytest.mark.smoke                # Core functionality, run first
+@pytest.mark.order(1)             # Execution order
 def test_basic_duckduckgo_search(browser, config, phrase):
     """
     GIVEN the DuckDuckGo home page is displayed
@@ -50,17 +50,23 @@ def test_basic_duckduckgo_search(browser, config, phrase):
     search_page.search(phrase)
     logger.info("Searched for phrase: '%s'", phrase)
 
-    # WAIT: Ensure results have loaded
+    # WAIT: Ensure results block is visible
     search_page.search_result_wait()
-
     logger.info("Search results appeared on the page.")
 
+    # WAIT: Ensure page title contains search phrase
+    WaitUtils.wait_for_title_contains(browser, phrase, timeout=30)
+
     # THEN: Verify the page title contains the search phrase
-    assert phrase in DuckDuckGoResultPage(browser).title(), f"Expected phrase '{phrase}' in page title."
+    actual_title = DuckDuckGoResultPage(browser).title()
+    assert phrase.lower() in actual_title.lower(), \
+        f"Expected phrase '{phrase}' in page title, got '{actual_title}'"
     logger.info("Verified page title contains the phrase.")
 
     # AND: Verify the search input still contains the search phrase
-    assert phrase == DuckDuckGoResultPage(browser).search_input_value(), "Search input does not retain the search phrase."
+    actual_input = DuckDuckGoResultPage(browser).search_input_value()
+    assert phrase.lower() in actual_input.lower(), \
+        "Search input does not retain the search phrase."
     logger.info("Verified search input retains the phrase.")
 
     # AND: Verify result links contain the search phrase

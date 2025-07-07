@@ -4,8 +4,9 @@ wait_utils.py
 
 This module provides utility functions for explicit waits using Selenium WebDriver.
 
-It centralizes WebDriverWait logic for visibility and presence checks,
-improving readability and maintainability across page objects and tests.
+It centralizes WebDriverWait logic for visibility, presence, clickability,
+URL changes, and title updates—improving readability and maintainability
+across page objects and tests.
 
 Typical usage:
 --------------
@@ -20,71 +21,86 @@ element = WaitUtils.wait_for_element_presence(browser, locator)
 # Wait for clickable element
 clickable = WaitUtils.wait_for_element_clickable(browser, locator)
 
-# Wait for partial URL
-WaitUtils.wait_for_url_to_contain(browser, partial_url)
+# Wait for URL change
+WaitUtils.wait_for_url_to_change(browser, starting_url)
+
+# Wait for title to contain text
+WaitUtils.wait_for_title_contains(browser, "Welcome")
 """
+
 import allure
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
+
 class WaitUtils:
+
     @staticmethod
     @allure.step("Wait for element visible: {locator} (timeout={timeout}s)")
     def wait_for_element_visible(browser, locator, timeout=90):
         """
         Waits for the element to be visible (present in DOM and not hidden).
+        Returns the WebElement if successful.
         """
         try:
             return WebDriverWait(browser, timeout).until(
                 EC.visibility_of_element_located(locator)
             )
         except TimeoutException:
-            raise AssertionError(f"Element {locator} not visible after {timeout}s")
-        print("🔍 Current page source for debugging:")
-        print(browser.page_source)
+            raise AssertionError(f"❌ Element {locator} not visible after {timeout}s")
 
     @staticmethod
     @allure.step("Wait for element presence: {locator} (timeout={timeout}s)")
     def wait_for_element_presence(browser, locator, timeout=90):
         """
         Waits for the element to be present in the DOM (visibility not required).
+        Returns the WebElement if successful.
         """
         try:
             return WebDriverWait(browser, timeout).until(
                 EC.presence_of_element_located(locator)
             )
         except TimeoutException:
-            raise AssertionError(f"Element {locator} not present in DOM after {timeout}s")
-
-        print("🔍 Current page source for debugging:")
-        print(browser.page_source)
+            raise AssertionError(f"❌ Element {locator} not present in DOM after {timeout}s")
 
     @staticmethod
     @allure.step("Wait for element clickable: {locator} (timeout={timeout}s)")
     def wait_for_element_clickable(browser, locator, timeout=90):
         """
         Waits for the element to be clickable (visible and enabled).
+        Returns the WebElement if successful.
         """
         try:
             return WebDriverWait(browser, timeout).until(
                 EC.element_to_be_clickable(locator)
             )
         except TimeoutException:
-            raise AssertionError(f"Element {locator} not clickable after {timeout}s")
-        print("🔍 Current page source for debugging:")
-        print(browser.page_source)
+            raise AssertionError(f"❌ Element {locator} not clickable after {timeout}s")
+
     @staticmethod
     @allure.step("Wait for URL to change from: {starting_url} (timeout={timeout}s)")
     def wait_for_url_to_change(browser, starting_url, timeout=90):
         """
-        Waits for URL to change after navigation
+        Waits for the URL to change from the starting URL after navigation.
         """
         try:
             WebDriverWait(browser, timeout).until(
                 EC.url_changes(starting_url)
             )
         except TimeoutException:
-            raise AssertionError(f"URL did not contain '{starting_url}' after {timeout}s")
-        print("🔍 Current page source for debugging:")
-        print(browser.page_source)
+            raise AssertionError(f"❌ URL did not change from '{starting_url}' after {timeout}s")
+
+    @staticmethod
+    @allure.step("Wait for title to contain: '{text}' (timeout={timeout}s)")
+    def wait_for_title_contains(browser, text, timeout=90):
+        """
+        Waits until the page title contains the specified text (case-insensitive).
+        """
+        try:
+            WebDriverWait(browser, timeout).until(
+                lambda d: text.lower() in d.title().lower(),
+                message=f"Timed out waiting for text '{text}' in page title."
+            )
+        except TimeoutException:
+            raise AssertionError(f"❌ Page title did not contain '{text}' after {timeout}s")
