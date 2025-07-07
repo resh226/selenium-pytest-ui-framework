@@ -1,0 +1,5 @@
+{
+  "browser": "Chrome",
+  "implicit_wait": 10,
+  "base_url": "http://duckduckgo.com/"
+}

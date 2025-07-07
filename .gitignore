@@ -1,6 +1,76 @@
-.idea/
+# -------------------------------
+# Python cache and compiled files
+# -------------------------------
 __pycache__/
-*.pyc
-.env
+*.py[cod]
+*.pyo
+
+# -------------------------------
+# Virtual environments
+# -------------------------------
 .venv/
+venv/
+ENV/
+env/
+*.env
+
+# -------------------------------
+# IDE/editor configs
+# -------------------------------
+.idea/              # PyCharm settings
+.vscode/            # VSCode settings
+
+# -------------------------------
+# Pipenv files (use locally only)
+# -------------------------------
+Pipfile
 Pipfile.lock
+
+# -------------------------------
+# Allure results and reports
+# -------------------------------
+allure-results/
+allure-report/
+allure-*/            # Any locally extracted Allure binaries
+
+# -------------------------------
+# Test and coverage reports
+# -------------------------------
+reports/
+*.html
+*.xml
+*.json
+*.log
+coverage/
+htmlcov/
+*.cover
+*.py,cover
+
+# -------------------------------
+# Docker artifacts
+# -------------------------------
+docker-compose.override.yml
+selenium-hub/
+selenium-nodes/
+
+# -------------------------------
+# Temporary or OS-specific files
+# -------------------------------
+.DS_Store            # macOS
+Thumbs.db            # Windows
+*.tmp
+*.swp
+*.bak
+*.orig
+
+# -------------------------------
+# Pytest cache
+# -------------------------------
+.pytest_cache/
+
+# -------------------------------
+# Build artifacts
+# -------------------------------
+build/
+dist/
+*.egg-info/

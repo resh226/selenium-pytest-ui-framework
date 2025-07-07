@@ -1,0 +1,58 @@
+# ------------------------------------------------------------------------------
+# docker-compose.yml
+# ------------------------------------------------------------------------------
+# Description:
+#   - Spins up Selenium Grid (Hub + Chrome + Firefox) and test container
+#   - Binds reports folder from container to host for screenshots and Allure results
+#
+# Usage:
+#   docker-compose up --abort-on-container-exit
+#   docker-compose down
+#
+# Part of Flow:
+#   GitHub → Jenkins → Docker → Selenium Grid → Tests → Allure Reports
+# ------------------------------------------------------------------------------
+
+version: "3.8"
+
+services:
+  selenium-hub:
+    image: selenium/hub:4.19.1
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"  # Selenium Grid UI available at http://localhost:4444
+
+  chrome:
+    image: selenium/node-chrome:4.19.1
+    depends_on:
+      - selenium-hub
+    volumes:
+      - /dev/shm:/dev/shm  # Prevent shared memory issues
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+
+  firefox:
+    image: selenium/node-firefox:4.19.1
+    depends_on:
+      - selenium-hub
+    volumes:
+      - /dev/shm:/dev/shm
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+
+  tests:
+    build: .  # Builds the Dockerfile in current directory
+    depends_on:
+      - selenium-hub
+      - chrome
+      - firefox
+    environment:
+      - HUB_HOST=selenium-hub        # Point tests to Selenium Hub
+      - HEADLESS=true                # Run headless by default (change to false locally)
+    volumes:
+      - ./reports:/app/reports       # Bind reports folder to host
+    command: pytest --alluredir=/app/reports/allure-results --headless

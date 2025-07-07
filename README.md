@@ -1,135 +1,116 @@
-# 🧪 my_first_seleniumpytest_project
+🧪 my_first_seleniumpytest_project
+A beginner-friendly Selenium UI Automation Framework project built with Python and Pytest.
+This repository is part of a real-world QA portfolio showcasing hands-on skills in test automation and modern framework design.
 
-A beginner-friendly Selenium UI Automation Framework project built with Python and Pytest.  
-This repository is part of a real-world QA portfolio to showcase hands-on skills in test automation and best practices in framework design.
+🔄 Project Status (In Progress)
+🚀 Core framework implemented with:
 
----
+Page Object Model (POM)
+Cross-browser configuration (Chrome, Firefox, Headless Chrome)
+Test parameterization for data-driven testing
+Parallel execution using pytest-xdist
 
-## 🔄 Project Status
 
-🚧 This project is currently in progress. Core framework structure and search scenario logic have been implemented. Browser configuration and dynamic waits are now functional via external config files.
+✅ Features Implemented (Current)
+🏁 Initial Setup
+Virtual environment & dependency management with pipenv
+Installed webdriver-manager for ChromeDriver & GeckoDriver auto-management
+Added conftest.py with reusable browser fixture (setup & teardown using yield)
+test_search.py uses fixture injection for browser management
 
----
+📦 Page Object Model (POM)
+Modular structure with pages/ package
+search.py: DuckDuckGoSearchPage – methods: load(), search(phrase)
+result.py: DuckDuckGoResultPage – methods: result_link_titles(), search_input_value(), title()
+Clean locator strategy using By.ID, By.CSS_SELECTOR
 
-## ✅ Progress So Far
+🔥 Test Parameterization
+Used @pytest.mark.parametrize for running the same test with multiple search phrases.
 
-### ✅ Initial Setup:
-- `pipenv` used for virtual environment and dependency management  
-- `webdriver-manager` installed to auto-download ChromeDriver and GeckoDriver  
-- `conftest.py` added with reusable browser fixture using `yield` for setup and teardown  
-- `test_search.py` updated to use browser fixture
+python
+@pytest.mark.parametrize('phrase', ['panda', 'python', 'polar bear'])
+def test_search(browser, phrase):
+    ...
 
-### ✅ Page Object Model (POM) Implemented:
-- Created `pages/` folder with `__init__.py` to define it as a package  
-- `search.py`: `DuckDuckGoSearchPage` with methods `load()` and `search(phrase)`  
-- `result.py`: `DuckDuckGoResultPage` with methods `result_link_titles()`, `search_input_value()`, and `title()`  
-- Used `By.ID` and `By.CSS_SELECTOR` locators
+⚡ Parallel Execution (pytest-xdist)
+Installed pytest-xdist for faster test execution
+Ran tests in parallel with:
+pytest -n 2
 
-### ✅ Functional Test Implemented:
-- `test_search.py`:
-  - Initializes both page objects
-  - Executes a complete search and asserts:
-    - Page title contains search term  
-    - Input field retains search value  
-    - First result contains search phrase  
-  - Uses list comprehension for text extraction
+⏳ Robust Synchronization
+Replaced time.sleep() with WebDriverWait & expected_conditions
+Ensures dynamic waits for faster & stable test runs.
 
-### ✅ Explicit Waits Added:
-- Integrated `WebDriverWait` and `expected_conditions` (EC) for dynamic synchronization  
-- Used `EC.title_contains(phrase)` to replace `time.sleep()`
+🌐 Cross-Browser  Support
+config.json controls browser choice: Chrome, Firefox
 
-### ✅ Configuration Management:
-- Created `config.json` at root level to define:
-  - Browser type (`Chrome`, `Firefox`, or `Headless Chrome`)  
-  - Implicit wait time (in seconds)
-- Updated `conftest.py` to:
-  - Load and validate `config.json` using a session-scoped fixture  
-  - Read browser type and wait dynamically  
-  - Support multiple browsers using `if-else` logic  
-  - Add browser maximization for full-screen testing
-
----
-
-📂 Project Structure (current)
+📂 Project Structure
 
 ```
 my_first_seleniumpytest_project/
 ├── Pipfile
-├── config.json # External config for browser and wait settings
+├── config.json              # Browser & wait settings
 ├── .gitignore
 ├── pages/
-│ ├── init.py # Declares the folder as a Python package
-│ ├── search.py # DuckDuckGoSearchPage (POM)
-│ └── result.py # DuckDuckGoResultPage (POM)
+│   ├── __init__.py          # Declares as package
+│   ├── search.py            # DuckDuckGoSearchPage (POM)
+│   └── result.py            # DuckDuckGoResultPage (POM)
 ├── tests/
-│ ├── conftest.py # Fixtures for config and browser setup
-│ └── test_search.py # UI test scenario using page objects
+│   ├── conftest.py          # Fixtures for config & browser setup
+│   └── test_search.py       # UI test scenario with page objects
 └── README.md
 
 ```
----
 
-## ✅ Tech Stack
+🧰 Tech Stack
+Python 3.13
+Selenium WebDriver
+Pytest
+WebDriver Manager
+pytest-xdist
+Pipenv
+PyCharm IDE
 
-- Python 3.13  
-- Selenium WebDriver  
-- Pytest  
-- WebDriver Manager  
-- Pipenv  
-- PyCharm IDE  
+📚 Concepts Demonstrated
+| Concept                   | Description                                              |
+|---------------------------|----------------------------------------------------------|
+| ✅ Selenium WebDriver      | Browser automation using Chrome/Firefox                  |
+| ✅ Page Object Model (POM) | Modular and reusable test structure                      |
+| ✅ Pytest Fixtures         | Clean setup/teardown with `yield`                        |
+| ✅ Explicit Waits (EC)     | Dynamic waits with `WebDriverWait`                       |
+| ✅ External Configuration  | `config.json` for browser & timeout management           |
+| ✅ Test Parameterization   | Multiple test data inputs via `@pytest.mark.parametrize` |
+| ✅ Parallel Test Execution | Faster testing using `pytest-xdist -n <num>`             |
 
----
 
-## 📚 Concepts Covered So Far
 
-| Concept | Description |
-|--------|-------------|
-| ✅ Selenium WebDriver | Used for browser automation |
-| ✅ Page Object Model (POM) | Modular and reusable test structure |
-| ✅ Pytest Fixtures | Clean test setup/teardown using `yield` and shared state |
-| ✅ Explicit Waits (EC) | Reliable waits for dynamic content with `WebDriverWait` |
-| ✅ External Configuration | `config.json` used to pass dynamic inputs (browser, wait time) |
-| ✅ Cross-Browser Execution | Supports Chrome, Firefox, and Headless Chrome |
-| ✅ Dynamic Test Debugging | Used `get_attribute('value')` to inspect inputs |
-| ✅ Headless Mode Support | Seamless switch to headless via config |
+🪛 Debugging Notes & Fixes
+| Issue                               | Resolution                                          |
+|-------------------------------------|-----------------------------------------------------|
+| Race condition between load & assert| Added `WebDriverWait` with `EC.title_contains()`    |
+| Browser not maximizing              | Added `maximize_window()` in `conftest.py`          |
+| Flaky headless parallel tests       | Used explicit waits and isolated browser sessions   |
+| Module import errors                | Added `__init__.py` in `pages/` folder              |
 
----
 
-## 🪛 Debugging Notes & Fixes
+🚫 Common Pitfalls & Fixes
+| Error                                       | Solution                                           |
+|---------------------------------------------|----------------------------------------------------|
+| ModuleNotFoundError: No module named 'pages'| Ensure `pages/__init__.py` is present              |
+| Elements not found                          | Replace `time.sleep()` with `WebDriverWait` + EC   |
+| Browser closing too early                   | Use `yield` fixtures and `--headed` mode for debugging|
+| Title assertion fails                       | Debug actual vs expected title with print statements|
+| Config file errors                          | Validate `config.json` values in the fixture       |
 
-- ✅ Test failed initially due to race condition between page load and assertions.
-- ✅ Fixed by implementing **explicit waits** (`WebDriverWait`) instead of `time.sleep`.
-- ✅ Used `EC.title_contains(phrase)` to wait for page title update after search.
-- ✅ Verified if search phrase was typed using manual observation and element value extraction via `get_attribute('value')`.
-- ✅ Browser not maximizing, Added `maximize_window()` in `conftest.py`
 
----
+📌 Next Steps
+📋 Integrate Allure Reports for rich test reporting
+🚀 Set up CI/CD pipeline with GitHub Actions for automated parallel runs
+🧪 Expand test suite with additional search scenarios and negative test cases
 
-## 🚫 Common Errors to Avoid
-
-| Issue                                          | How to Fix                                                                  |
-|------------------------------------------------|-----------------------------------------------------------------------------|
-| `ModuleNotFoundError: No module named 'pages'` | Ensure `pages/` folder contains `__init__.py`                               |
-| `find_element` fails too soon                  | Use `WebDriverWait` + `expected_conditions` for robust synchronization      |
-| Browser closes too early                       | Add waits or use `--headed` mode during debugging                           |
-| Title assertion fails                          | Add debug print statements or assert actual vs expected with clear messages |
-| Browser tabs already open                      | Not an issue; each WebDriver opens its own session                          |
-| Config file errors                             | Validate values in `config()` fixture before using                          |
-
----
-
-## 📌 To-Do (Next Steps)
-
-- ⏳ Finalize TODOs in page object methods  
-- ⏳ Parameterize test cases for different search phrases  
-- ⏳ Organize test data and selectors as needed  
-- ⏳ Integrate Allure Reports with test execution  
-- ⏳ Add parallel execution support and command-line flexibility  
-- ⏳ Expand test coverage with more DuckDuckGo search scenarios  
 
 
 🙋‍♀️ About Me
 
 Reshma Sajeev🧪 ISTQB Certified | ✅ Postman Student Expert 🔗 https://www.linkedin.com/in/reshma-sajeev-889b7215b/
 ⭐ This repository is part of my personal QA portfolio to demonstrate hands-on experience in Selenium UI Automation using Python and Pytest
-

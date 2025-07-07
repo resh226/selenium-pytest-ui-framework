@@ -7,6 +7,10 @@ name = "pypi"
 selenium = "*"
 pytest = "*"
 webdriver-manager = "*"
+pytest-xdist = "*"
+pytest-html = "*"
+allure-pytest = "*"
+pytest-order = "*"
 
 [dev-packages]
 

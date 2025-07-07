@@ -2,25 +2,85 @@
 This module contains DuckDuckGoResultPage,
 the page object for the DuckDuckGo search result page.
 """
-from selenium.webdriver.common.by import By
+import allure
 
+from locators.result_locators import DuckDuckGoResultLocators as Loc
+from utils.wait_utils import WaitUtils             # for importing helper functions for explicit waits mentioned in wait_utils.py
+from base.base_page import BasePage   #inheritace
 
-class DuckDuckGoResultPage:
-
-    #locators.
-    result_titles = (By.CSS_SELECTOR, 'a.result__a')
-    search_input = (By.ID, 'search_form_input')
+class DuckDuckGoResultPage(BasePage):
 
     def __init__(self, browser):
-        self.browser = browser
+        super().__init__(browser)  #super() → Finds parent BasePage
 
+    @allure.step("Get all visible search result titles")
     def result_link_titles(self):
-        result_of_titles = self.browser.find_elements(*self.result_titles) #gets all matching elements,*->unpacks the tuple (By, value)
-        return [link.text for link in result_of_titles] #List comprehension returns their text
+        """
+        Gets all visible search result link titles from the results page.
 
+        :return: List of visible result link texts.
+        :raises AssertionError: If no results are visible within timeout.
+        """
+        WaitUtils.wait_for_element_visible(self.browser, Loc.RESULT_TITLES)
+
+        # Get all result link elements
+        result_elements = self.browser.find_elements(*Loc.RESULT_TITLES)
+
+        # Filter only visible links and extract their text
+        visible_titles = [link.text for link in result_elements if link.is_displayed()]
+
+        # Assert at least one visible search result exists
+        assert visible_titles, "No visible search result titles found."
+
+        return visible_titles
+
+    @allure.step("Get current value from the search input field")
     def search_input_value(self):
-        input_value = self.browser.find_element(*self.search_input) #gets matching elements,*->unpacks the tuple (By, value)
-        return input_value.get_attribute('value') #.get_attribute('value') is used for input fields (since .text returns empty)
+        """
+        Returns the current value entered in the search input field.
 
+        :return: String value from the search input field.
+        """
+        WaitUtils.wait_for_element_visible(self.browser, Loc.SEARCH_INPUT)
+        input_field = self.browser.find_element(*Loc.SEARCH_INPUT)
+        return input_field.get_attribute('value')
+
+    @allure.step("Get current page title")
     def title(self):
-        return self.browser.title     # Return the title of the current page displayed in the browser tab
+        return self.get_title() # Return the title of the current page displayed in the browser tab
+
+    @allure.step("Get count of search result links")
+    def result_count(self):
+        """
+           Returns the number of search result links on the page for gibberish query.
+           If no results are found, returns 0.
+           """
+        try:
+            # Look for all result links (if any)
+            links = self.browser.find_elements(*Loc.RESULT_TITLES)
+            count = len(links)
+            return count
+        except:
+            # In case the container exists but no links
+            return 0
+
+    @allure.step("Check for long query error message")
+    def long_query_result_page(self):
+        """
+        Checks if the results page is loaded with error for long query search results.
+        """
+        long_query_message = self.browser.find_element(*Loc.LONG_QUERY_ERROR)
+        error_text = long_query_message.text
+        return error_text
+
+    @allure.step("Click first visible search result link")
+    def click_first_result(self):
+        """
+        Clicks the first visible search result link.
+        """
+        starting_url = self.browser.current_url
+        first_link = WaitUtils.wait_for_element_clickable(self.browser, Loc.FIRST_RESULT_LINK)
+        first_link.click()
+
+        # Wait for URL to change after navigation
+        WaitUtils.wait_for_url_to_change(self.browser, starting_url)
