@@ -1,10 +1,10 @@
 
 FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1  # Prevent .pyc files
-ENV PYTHONUNBUFFERED=1         # Show logs immediately
-ENV REPORTS_DIR=/app/reports   # Reports directory
-ENV HEADLESS=true              # Default headless mode
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV REPORTS_DIR=/app/reports
+ENV HEADLESS=true
 
 WORKDIR /app
 
