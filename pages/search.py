@@ -2,6 +2,10 @@
 This module contains DuckDuckGoSearchPage,
 the page object for the DuckDuckGo search page.
 """
+import os
+import random
+import time
+
 import allure
 from selenium.webdriver import Keys
 from locators.search_locators import DuckDuckGoSearchLocators as Loc
@@ -30,8 +34,19 @@ class DuckDuckGoSearchPage(BasePage):
         # Wait until the search input is clickable
         search_input = wait_for_element_clickable(self.browser, Loc.SEARCH_INPUT,timeout = get_default_timeout())
         search_input.clear()
+        """
+           Types the text character by character with a random delay,
+           and waits explicitly for the search button/input to be interactable.this is done as step for CAPTHA
+           prevention for anti bot detection when running in docker +Selenium grid
+        """
+        IS_GRID = bool(os.getenv("GRID_URL"))
+        TYPING_DELAY = random.uniform(0.05, 0.2) if IS_GRID else 0  # No delay locally
+        for char in phrase:
+            search_input.send_keys(char)
+            if TYPING_DELAY:
+                time.sleep(TYPING_DELAY)
         # types and presses Enter (Keys.RETURN simulates pressing Enter)
-        search_input.send_keys(phrase + Keys.RETURN)
+        search_input.send_keys(Keys.RETURN)
 
     @allure.step("Wait for search results to load")
     def search_result_wait(self):
