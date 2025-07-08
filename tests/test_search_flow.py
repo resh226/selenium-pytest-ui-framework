@@ -42,6 +42,7 @@ def test_search_flow(browser, config):
     search_page.search(search_phrase)
     logger.info("Searched for phrase: '%s'", search_phrase)
 
+    #wait till result titles are loaded
     search_page.search_result_wait()
     logger.info("Results page loaded.")
 

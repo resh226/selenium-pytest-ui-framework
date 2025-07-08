@@ -38,7 +38,7 @@ from selenium.common.exceptions import TimeoutException
 
 
 @allure.step("Wait for element visible: {locator} (timeout={timeout}s)")
-def wait_for_element_visible(browser, locator, timeout=90, retries=2):
+def wait_for_element_visible(browser, locator, timeout=40, retries=2):
     """
     Waits for the element to be visible (present in DOM and not hidden).
     Retries if TimeoutException occurs.
@@ -63,7 +63,7 @@ def wait_for_element_visible(browser, locator, timeout=90, retries=2):
 
 
 @allure.step("Wait for element presence: {locator} (timeout={timeout}s)")
-def wait_for_element_presence(browser, locator, timeout=90):
+def wait_for_element_presence(browser, locator, timeout=40):
     """
     Waits for the element to be present in the DOM (visibility not required).
     Returns:
@@ -80,7 +80,7 @@ def wait_for_element_presence(browser, locator, timeout=90):
 
 
 @allure.step("Wait for element clickable: {locator} (timeout={timeout}s)")
-def wait_for_element_clickable(browser, locator, timeout=90):
+def wait_for_element_clickable(browser, locator, timeout=40):
     """
     Waits for the element to be clickable (visible and enabled).
     Returns:
@@ -97,7 +97,7 @@ def wait_for_element_clickable(browser, locator, timeout=90):
 
 
 @allure.step("Wait for URL to change from: {starting_url} (timeout={timeout}s)")
-def wait_for_url_to_change(browser, starting_url, timeout=90):
+def wait_for_url_to_change(browser, starting_url, timeout=40):
     """
     Waits for the URL to change from the starting URL after navigation.
     Raises:
@@ -114,7 +114,7 @@ def wait_for_url_to_change(browser, starting_url, timeout=90):
 
 
 @allure.step("Wait for title to contain: '{text}' (timeout={timeout}s)")
-def wait_for_title_contains(browser, text, timeout=90):
+def wait_for_title_contains(browser, text, timeout=40):
     """
     Waits until the page title contains the specified text (case-insensitive).
     Raises:
@@ -132,7 +132,7 @@ def wait_for_title_contains(browser, text, timeout=90):
 
 
 @allure.step("Wait for search input to contain: '{text}' (timeout={timeout}s)")
-def wait_for_input_contains(browser, locator, text, timeout=10):
+def wait_for_input_contains(browser, locator, text, timeout=40):
     """
     Waits until the input field's value contains the given text.
     Raises:

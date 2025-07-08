@@ -80,7 +80,7 @@ class DuckDuckGoResultPage(BasePage):
         Clicks the first visible search result link.
         """
         starting_url = self.browser.current_url
-        first_link = wait_for_element_clickable(self.browser, Loc.FIRST_RESULT_LINK)
+        first_link = wait_for_element_clickable(self.browser, Loc.FIRST_RESULT_LINK, 60)
         first_link.click()
 
         # Wait for URL to change after navigation

@@ -10,7 +10,7 @@ class DuckDuckGoResultLocators:
     """
     Locators for the DuckDuckGo Result Page.
     """
-    RESULT_TITLES = (By.CSS_SELECTOR, 'a.result__a')  # Search result links
+    RESULT_TITLES = (By.CSS_SELECTOR, "ol.react-results--main li[data-layout='organic'] a")  # Search result links
     SEARCH_INPUT = (By.ID, 'search_form_input')       # Search input box on result page
     LONG_QUERY_ERROR = (By.XPATH, "//p[contains(text(), 'Search query entered was too long')]")  # Error for long queries
     FIRST_RESULT_LINK = (By.XPATH, "//article[@id='r1-0']//a[@data-testid='result-title-a']")
