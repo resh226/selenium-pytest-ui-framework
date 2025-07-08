@@ -7,7 +7,6 @@
 #   - Always uploads Allure results, screenshots, and HTML report
 #   - Sends email notification at the end
 #   - Docker layer caching enabled to reduce build/setup time
-#   - Workflow fails only if build/setup fails (not test failures)
 # -----------------------------------------------------------------------------
 
 name: Selenium Pytest CI
@@ -45,7 +44,6 @@ jobs:
       with:
         path: /tmp/.buildx-cache
         key: ${{ runner.os }}-docker-${{ github.sha }}
-        policy: pull
 
     # ----------------------------------------
     # Step 3: Build and Start Selenium Grid
@@ -72,4 +70,108 @@ jobs:
         echo "❌ Selenium Grid did not become healthy in time."
         exit 1
 
-    # -----------------
+    # ----------------------------------------
+    # Step 5: Run Selenium Tests and Capture Exit Code
+    # ----------------------------------------
+    - name: Run Selenium Tests
+      id: run_tests
+      run: |
+        echo "🚀 Running Selenium tests..."
+        set +e  # Don't fail pipeline on test failures
+        docker compose exec tests pytest --alluredir=reports/allure-results
+        TEST_EXIT_CODE=$?
+        echo "Test Exit Code: $TEST_EXIT_CODE"
+        echo "test_status=$TEST_EXIT_CODE" >> $GITHUB_ENV
+        exit 0  # Always succeed here; we handle test failures separately
+
+    # ----------------------------------------
+    # Step 6.1: Install Allure CLI
+    # ----------------------------------------
+    - name: Install Allure CLI
+      if: always()
+      run: |
+        echo "⬇️ Downloading Allure CLI..."
+        curl -L -o allure-2.27.0.tgz https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+        tar -zxvf allure-2.27.0.tgz
+        sudo mv allure-2.27.0 /opt/allure
+        sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+        allure --version
+
+    # ----------------------------------------
+    # Step 6.2: Generate Allure HTML Report
+    # ----------------------------------------
+    - name: Generate Allure HTML Report
+      if: always()
+      run: |
+        sudo mkdir -p reports/allure-report
+        sudo allure generate reports/allure-results -o reports/allure-report --clean || echo "⚠️ Allure generation failed"
+
+    # ----------------------------------------
+    # Step 7: Upload Allure Results (Raw XML)
+    # ----------------------------------------
+    - name: Upload Allure Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-results
+        path: reports/allure-results/
+
+    # ----------------------------------------
+    # Step 8: Upload Allure HTML Report
+    # ----------------------------------------
+    - name: Upload Allure HTML Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report
+        path: reports/allure-report/
+
+    # ----------------------------------------
+    # Step 9: Upload Screenshots
+    # ----------------------------------------
+    - name: Upload Screenshots
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: screenshots
+        path: reports/screenshots/
+
+    # ----------------------------------------
+    # Step 10: Send Email Notification with Test Status
+    # ----------------------------------------
+    - name: Send Email Notification
+      if: always()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: |
+          Selenium Pytest CI - ${{ env.test_status == '0' && 'SUCCESS' || 'FAILURE' }}
+        body: |
+          Hi Reshma,
+
+          The Selenium Pytest CI workflow has completed.
+          ✅ Build Status: SUCCESS
+          📊 Test Status: ${{ env.test_status == '0' && 'PASSED' || 'FAILED' }}
+          📦 Repository: ${{ github.repository }}
+          📝 Workflow: ${{ github.workflow }}
+          🔗 Run URL: ${{ github.run_url }}
+
+          📁 Artifacts Available:
+          - Allure Results
+          - Allure HTML Report
+          - Screenshots
+
+          Regards,
+          GitHub Actions
+        to: reshmasajeevpulickal@email.com
+        from: ${{ secrets.EMAIL_USERNAME }}
+
+    # ----------------------------------------
+    # Step 11: Fail Job if Build Errors (Optional)
+    # ----------------------------------------
+    - name: Fail Job if Build Errors
+      if: failure()
+      run: exit 1
