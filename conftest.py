@@ -14,11 +14,17 @@ from utils.file_utils import FileUtils
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
+from locators.result_locators import DuckDuckGoResultLocators as Loc
 
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from webdriver_manager.firefox import GeckoDriverManager
+
+# -----------------------------------------------------------------------------
+# GRID DETECTION FLAG
+# -----------------------------------------------------------------------------
+IS_GRID = bool(os.getenv("GRID_URL"))
 
 # -----------------------------------------------------------------------------
 # CONFIG FIXTURE
@@ -40,10 +46,10 @@ def browser(config):
     browser_type = config['browser']
     wait_time = config['implicit_wait']
     grid_url = os.getenv("GRID_URL", "http://selenium-hub:4444")
-    is_grid = bool(os.getenv("GRID_URL"))
 
-    print(f"🌐 Running on {'Selenium Grid' if is_grid else 'Local WebDriver'}")
-    if is_grid:
+    print(f"🌐 Running on {'Selenium Grid' if IS_GRID else 'Local WebDriver'}")
+
+    if IS_GRID:
         if browser_type == 'Chrome':
             options = ChromeOptions()
             options.add_argument("--headless=new")
@@ -60,10 +66,25 @@ def browser(config):
         else:
             raise ValueError(f"Unsupported browser for Grid: {browser_type}")
 
-        b = selenium.webdriver.Remote(
-            command_executor=grid_url,
-            options=options
-        )
+        # 🛠 Retry browser creation
+        for attempt in range(3):
+            try:
+                print(f"🔄 Attempt {attempt + 1}: Starting browser session...")
+                b = selenium.webdriver.Remote(
+                    command_executor=grid_url,
+                    options=options
+                )
+                print("✅ Browser session started successfully.")
+                break
+            except Exception as e:
+                print(f"⚠️ Attempt {attempt + 1}: Browser failed to start - {e}")
+                if attempt < 2:
+                    print("⏳ Retrying in 5 seconds...")
+                    import time
+                    time.sleep(5)
+                else:
+                    print("❌ All attempts to start browser failed.")
+                    raise
     else:
         if browser_type == 'Chrome':
             options = ChromeOptions()
@@ -86,6 +107,15 @@ def browser(config):
 
     b.implicitly_wait(wait_time)
     b.maximize_window()
+
+    try:
+        captcha = b.find_element(*Loc.CAPTCHA_DIV)
+        if captcha.is_displayed():
+            print("⚠ CAPTCHA detected at global level. Skipping test.")
+            import pytest
+            pytest.skip("Skipped due to CAPTCHA detected on page.")
+    except NoSuchElementException:
+        pass  # No CAPTCHA, proceed normally
 
     yield b
     b.quit()

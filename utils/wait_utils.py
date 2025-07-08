@@ -35,10 +35,13 @@ import allure
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from conftest import IS_GRID
+DEFAULT_TIMEOUT = 80 if IS_GRID else 40
 
 
-@allure.step("Wait for element visible: {locator} (timeout={timeout}s)")
-def wait_for_element_visible(browser, locator, timeout=40, retries=2):
+
+@allure.step("Wait for element visible: {locator} (timeout={DEFAULT_TIMEOUT}s)")
+def wait_for_element_visible(browser, locator, timeout=DEFAULT_TIMEOUT, retries=2):
     """
     Waits for the element to be visible (present in DOM and not hidden).
     Retries if TimeoutException occurs.
@@ -63,7 +66,7 @@ def wait_for_element_visible(browser, locator, timeout=40, retries=2):
 
 
 @allure.step("Wait for element presence: {locator} (timeout={timeout}s)")
-def wait_for_element_presence(browser, locator, timeout=40):
+def wait_for_element_presence(browser, locator, timeout=DEFAULT_TIMEOUT):
     """
     Waits for the element to be present in the DOM (visibility not required).
     Returns:
@@ -80,7 +83,7 @@ def wait_for_element_presence(browser, locator, timeout=40):
 
 
 @allure.step("Wait for element clickable: {locator} (timeout={timeout}s)")
-def wait_for_element_clickable(browser, locator, timeout=40):
+def wait_for_element_clickable(browser, locator, timeout=DEFAULT_TIMEOUT):
     """
     Waits for the element to be clickable (visible and enabled).
     Returns:
@@ -97,7 +100,7 @@ def wait_for_element_clickable(browser, locator, timeout=40):
 
 
 @allure.step("Wait for URL to change from: {starting_url} (timeout={timeout}s)")
-def wait_for_url_to_change(browser, starting_url, timeout=40):
+def wait_for_url_to_change(browser, starting_url, timeout=DEFAULT_TIMEOUT):
     """
     Waits for the URL to change from the starting URL after navigation.
     Raises:
@@ -114,7 +117,7 @@ def wait_for_url_to_change(browser, starting_url, timeout=40):
 
 
 @allure.step("Wait for title to contain: '{text}' (timeout={timeout}s)")
-def wait_for_title_contains(browser, text, timeout=40):
+def wait_for_title_contains(browser, text, timeout=DEFAULT_TIMEOUT):
     """
     Waits until the page title contains the specified text (case-insensitive).
     Raises:
@@ -132,7 +135,7 @@ def wait_for_title_contains(browser, text, timeout=40):
 
 
 @allure.step("Wait for search input to contain: '{text}' (timeout={timeout}s)")
-def wait_for_input_contains(browser, locator, text, timeout=40):
+def wait_for_input_contains(browser, locator, text, timeout=DEFAULT_TIMEOUT):
     """
     Waits until the input field's value contains the given text.
     Raises:

@@ -4,6 +4,8 @@
 # Spins up Selenium Grid and test automation container
 # ------------------------------------------------------------------------------
 
+version: "3.8"
+
 services:
   selenium-hub:
     image: selenium/hub:4.19.1
@@ -11,13 +13,14 @@ services:
     ports:
       - "4444:4444"
     healthcheck:  # 🟢 Ensure Grid API is ready before nodes/tests depend on it
-      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      test: ["CMD", "curl", "-f", "http://localhost:4444/status"]
       interval: 10s
       timeout: 5s
       retries: 15
 
   chrome:
     image: selenium/node-chrome:4.19.1
+    shm_size: 2gb  # 🛡 Prevent Chrome crashes in Docker
     depends_on:
       selenium-hub:
         condition: service_healthy
@@ -25,13 +28,14 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-      - SE_NODE_MAX_SESSIONS=1  # 🔥 Faster startup
+      - SE_NODE_MAX_SESSIONS=1  # 🏃 Limit 1 session per node
       - SE_NODE_SESSION_TIMEOUT=300  # 🕒 Allow sessions up to 5 minutes
     volumes:
       - /dev/shm:/dev/shm
 
   firefox:
     image: selenium/node-firefox:4.19.1
+    shm_size: 2gb  # 🛡 Prevent Firefox crashes in Docker
     depends_on:
       selenium-hub:
         condition: service_healthy
@@ -39,7 +43,8 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-      - SE_NODE_MAX_SESSIONS=1  # 🔥 Faster startup
+      - SE_NODE_MAX_SESSIONS=1  # 🏃 Limit 1 session per node
+      - SE_NODE_SESSION_TIMEOUT=300  # 🕒 Allow sessions up to 5 minutes
     volumes:
       - /dev/shm:/dev/shm
 
