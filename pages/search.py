@@ -40,7 +40,7 @@ class DuckDuckGoSearchPage(BasePage):
            prevention for anti bot detection when running in docker +Selenium grid
         """
         IS_GRID = bool(os.getenv("GRID_URL"))
-        TYPING_DELAY = random.uniform(0.05, 0.2) if IS_GRID else 0  # No delay locally
+        TYPING_DELAY = random.uniform(0.05, 0.2) if IS_GRID and random.choice([True, False]) else 0  # No delay locally
         for char in phrase:
             search_input.send_keys(char)
             if TYPING_DELAY:
