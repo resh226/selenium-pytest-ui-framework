@@ -5,8 +5,11 @@ the page object for the DuckDuckGo search result page.
 import allure
 
 from locators.result_locators import DuckDuckGoResultLocators as Loc
+from utils.constants import get_default_timeout
 # for importing helper functions for explicit waits mentioned in wait_utils.py
-from utils.wait_utils import (wait_for_element_visible,wait_for_element_clickable,wait_for_url_to_change)
+from utils.wait_utils import wait_for_element_visible
+from utils.wait_utils import wait_for_element_clickable
+from utils.wait_utils import wait_for_url_to_change
 from base.base_page import BasePage   #inheritace
 
 class DuckDuckGoResultPage(BasePage):
@@ -22,7 +25,7 @@ class DuckDuckGoResultPage(BasePage):
         :return: List of visible result link texts.
         :raises AssertionError: If no results are visible within timeout.
         """
-        wait_for_element_visible(self.browser, Loc.RESULT_TITLES)
+        wait_for_element_visible(self.browser, Loc.RESULT_TITLES, timeout = get_default_timeout())
 
         # Get all result link elements
         result_elements = self.browser.find_elements(*Loc.RESULT_TITLES)
@@ -42,7 +45,7 @@ class DuckDuckGoResultPage(BasePage):
 
         :return: String value from the search input field.
         """
-        wait_for_element_visible(self.browser, Loc.SEARCH_INPUT)
+        wait_for_element_visible(self.browser, Loc.SEARCH_INPUT, timeout = get_default_timeout())
         input_field = self.browser.find_element(*Loc.SEARCH_INPUT)
         return input_field.get_attribute('value')
 
@@ -80,8 +83,8 @@ class DuckDuckGoResultPage(BasePage):
         Clicks the first visible search result link.
         """
         starting_url = self.browser.current_url
-        first_link = wait_for_element_clickable(self.browser, Loc.FIRST_RESULT_LINK, 60)
+        first_link = wait_for_element_clickable(self.browser, Loc.FIRST_RESULT_LINK, timeout = get_default_timeout())
         first_link.click()
 
         # Wait for URL to change after navigation
-        wait_for_url_to_change(self.browser, starting_url)
+        wait_for_url_to_change(self.browser, starting_url, timeout = get_default_timeout())

@@ -22,11 +22,6 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from webdriver_manager.firefox import GeckoDriverManager
 
 # -----------------------------------------------------------------------------
-# GRID DETECTION FLAG
-# -----------------------------------------------------------------------------
-IS_GRID = bool(os.getenv("GRID_URL"))
-
-# -----------------------------------------------------------------------------
 # CONFIG FIXTURE
 # -----------------------------------------------------------------------------
 @pytest.fixture(scope="session")
@@ -46,7 +41,7 @@ def browser(config):
     browser_type = config['browser']
     wait_time = config['implicit_wait']
     grid_url = os.getenv("GRID_URL", "http://selenium-hub:4444")
-
+    IS_GRID = bool(os.getenv("GRID_URL"))
     print(f"🌐 Running on {'Selenium Grid' if IS_GRID else 'Local WebDriver'}")
 
     if IS_GRID:

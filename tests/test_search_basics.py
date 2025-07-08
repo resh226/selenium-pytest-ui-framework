@@ -15,7 +15,9 @@ from pages.result import DuckDuckGoResultPage
 from pages.search import DuckDuckGoSearchPage
 # Import helper functions
 from utils.file_utils import FileUtils
-from utils.wait_utils import (wait_for_title_contains,wait_for_input_contains)#import our wait utility functions
+from utils.constants import get_default_timeout
+from utils.wait_utils import wait_for_title_contains
+from utils.wait_utils import wait_for_input_contains #import our wait utility functions
 
 #import locator
 from locators.result_locators import DuckDuckGoResultLocators as Loc
@@ -58,7 +60,7 @@ def test_basic_duckduckgo_search(browser, config, phrase):
     logger.info("Search results appeared on the page.")
 
     # WAIT: Ensure page title contains search phrase
-    wait_for_title_contains(browser, phrase, timeout=30)
+    wait_for_title_contains(browser, phrase, timeout = get_default_timeout())
 
     # THEN: Verify the page title contains the search phrase
     actual_title = DuckDuckGoResultPage(browser).title()
@@ -67,7 +69,7 @@ def test_basic_duckduckgo_search(browser, config, phrase):
     logger.info("Verified page title contains the phrase.")
 
     # WAIT: Ensure search input contains search phrase
-    wait_for_input_contains(browser, Loc.SEARCH_INPUT, phrase, timeout=30)
+    wait_for_input_contains(browser, Loc.SEARCH_INPUT, phrase, timeout = get_default_timeout())
 
     actual_input = DuckDuckGoResultPage(browser).search_input_value()
     # AND: Verify the search input still contains the search phrase
