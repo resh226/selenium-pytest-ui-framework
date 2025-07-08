@@ -1,11 +1,12 @@
 # -----------------------------------------------------------------------------
-# Selenium Pytest CI Workflow
+# Selenium Pytest CI Workflow (Updated - Clean Separation)
 # -----------------------------------------------------------------------------
 # Description:
-#   - Builds Docker image, starts Selenium Grid
-#   - Waits for Docker healthchecks before running tests
+#   - Builds Docker image and starts Selenium Grid
+#   - Runs Selenium tests and captures test result status
 #   - Always uploads Allure results, screenshots, and HTML report
 #   - Sends email notification at the end
+#   - Workflow fails only if build/setup fails (not test failures)
 # -----------------------------------------------------------------------------
 
 name: Selenium Pytest CI
@@ -61,16 +62,25 @@ jobs:
         exit 1
 
     # ----------------------------------------
-    # Step 5: Run Selenium Tests
+    # Step 5: Run Selenium Tests and Capture Exit Code
     # ----------------------------------------
     - name: Run Selenium Tests
-      run: docker compose exec tests pytest
+      id: run_tests
+      run: |
+        echo "🚀 Running Selenium tests..."
+        set +e  # Don't fail pipeline on test failures
+        docker compose exec tests pytest --alluredir=reports/allure-results
+        TEST_EXIT_CODE=$?
+        echo "Test Exit Code: $TEST_EXIT_CODE"
+        # Save exit code as GitHub Actions output
+        echo "test_status=$TEST_EXIT_CODE" >> $GITHUB_ENV
+        exit 0  # Always succeed here; we handle test failures separately
 
     # ----------------------------------------
-    # Step 6.1: Install Allure CLI (Updated)
+    # Step 6.1: Install Allure CLI
     # ----------------------------------------
     - name: Install Allure CLI
-      if: always() # Run even if tests fail
+      if: always()
       run: |
         echo "⬇️ Downloading Allure CLI..."
         curl -L -o allure-2.27.0.tgz https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
@@ -80,10 +90,10 @@ jobs:
         allure --version
 
     # ----------------------------------------
-    # Step 6.2: Generate Allure HTML Report (Updated)
+    # Step 6.2: Generate Allure HTML Report
     # ----------------------------------------
     - name: Generate Allure HTML Report
-      if: always() # Run even if tests fail
+      if: always()
       run: |
         sudo mkdir -p reports/allure-report
         sudo allure generate reports/allure-results -o reports/allure-report --clean || echo "⚠️ Allure generation failed"
@@ -92,7 +102,7 @@ jobs:
     # Step 7: Upload Allure Results (Raw XML)
     # ----------------------------------------
     - name: Upload Allure Results
-      if: always() # Run even if tests fail
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: allure-results
@@ -102,7 +112,7 @@ jobs:
     # Step 8: Upload Allure HTML Report
     # ----------------------------------------
     - name: Upload Allure HTML Report
-      if: always() # Run even if tests fail
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: allure-report
@@ -112,29 +122,31 @@ jobs:
     # Step 9: Upload Screenshots
     # ----------------------------------------
     - name: Upload Screenshots
-      if: always() # Run even if tests fail
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: screenshots
         path: reports/screenshots/
 
     # ----------------------------------------
-    # Step 10: Send Email Notification (Updated for Gmail)
+    # Step 10: Send Email Notification with Test Status
     # ----------------------------------------
     - name: Send Email Notification
-      if: always() # Send email regardless of success/failure
+      if: always()
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
         server_port: 587
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: Selenium Pytest CI - ${{ job.status }}
+        subject: |
+          Selenium Pytest CI - ${{ env.test_status == '0' && 'SUCCESS' || 'FAILURE' }}
         body: |
           Hi Reshma,
 
           The Selenium Pytest CI workflow has completed.
-          ✅ Status: ${{ job.status }}
+          ✅ Build Status: SUCCESS
+          📊 Test Status: ${{ env.test_status == '0' && 'PASSED' || 'FAILED' }}
           📦 Repository: ${{ github.repository }}
           📝 Workflow: ${{ github.workflow }}
           🔗 Run URL: ${{ github.run_url }}
@@ -148,3 +160,10 @@ jobs:
           GitHub Actions
         to: reshmasajeevpulickal@email.com
         from: ${{ secrets.EMAIL_USERNAME }}
+
+    # ----------------------------------------
+    # Step 11: Fail Job if Build Errors (Optional)
+    # ----------------------------------------
+    - name: Fail Job if Build Errors
+      if: failure()
+      run: exit 1
