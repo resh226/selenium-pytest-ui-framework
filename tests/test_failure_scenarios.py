@@ -35,6 +35,9 @@ def test_first_result_url_is_duckduckgo(browser, config):
     result_page = DuckDuckGoResultPage(browser)
 
     search_page.load()
+    # Reset cookies and storage for session reuse
+    browser.delete_all_cookies()
+    browser.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
     logger.info("DuckDuckGo home page loaded.")
 
     search_page.search(search_phrase)

@@ -33,10 +33,18 @@ def test_search_flow(browser, config):
 
     logger.info("Starting navigation test with search phrase: '%s'", search_phrase)
 
+    # Navigate to DuckDuckGo first before clearing storage
+    browser.get("https://duckduckgo.com")
+    browser.delete_all_cookies()
+    browser.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
+
     search_page = DuckDuckGoSearchPage(browser, config)
     result_page = DuckDuckGoResultPage(browser)
 
     search_page.load()
+    # Reset cookies and storage for session reuse
+    browser.delete_all_cookies()
+    browser.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
     logger.info("DuckDuckGo home page loaded.")
 
     search_page.search(search_phrase)

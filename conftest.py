@@ -36,7 +36,7 @@ def config():
 # -----------------------------------------------------------------------------
 # BROWSER FIXTURE
 # -----------------------------------------------------------------------------
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def browser(config):
     browser_type = config['browser']
     wait_time = config['implicit_wait']

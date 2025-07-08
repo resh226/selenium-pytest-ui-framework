@@ -49,6 +49,10 @@ def test_basic_duckduckgo_search(browser, config, phrase):
     # GIVEN: Load the DuckDuckGo home page
     search_page = DuckDuckGoSearchPage(browser, config)
     search_page.load()
+
+    # Reset cookies and storage for session reuse
+    browser.delete_all_cookies()
+    browser.execute_script("window.localStorage.clear(); window.sessionStorage.clear();")
     logger.info("DuckDuckGo home page loaded.")
 
     # WHEN: Perform search with the provided phrase
