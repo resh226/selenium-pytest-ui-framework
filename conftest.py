@@ -115,16 +115,6 @@ def browser(config):
 
     b.implicitly_wait(wait_time)
     b.maximize_window()
-
-    try:
-        captcha = b.find_element(*Loc.CAPTCHA_DIV)
-        if captcha.is_displayed():
-            print("⚠ CAPTCHA detected at global level. Skipping test.")
-            import pytest
-            pytest.skip("Skipped due to CAPTCHA detected on page.")
-    except NoSuchElementException:
-        pass  # No CAPTCHA, proceed normally
-
     yield b
     b.quit()
 
