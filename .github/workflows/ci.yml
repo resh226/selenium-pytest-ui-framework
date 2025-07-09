@@ -1,12 +1,8 @@
 # -----------------------------------------------------------------------------
-# Selenium Pytest CI Workflow (Updated - Clean Separation + Docker Caching)
+# Selenium Pytest CI Workflow (Final - Optimized for Updated Docker & Grid)
 # -----------------------------------------------------------------------------
-# Description:
-#   - Builds Docker image and starts Selenium Grid
-#   - Runs Selenium tests and captures test result status
-#   - Always uploads Allure results, screenshots, and HTML report
-#   - Sends email notification at the end
-#   - Docker layer caching enabled to reduce build/setup time
+# Builds Docker image, starts Selenium Grid, runs tests, uploads artifacts,
+# and sends email notification. Fully compatible with wait-for-grid.sh.
 # -----------------------------------------------------------------------------
 
 name: Selenium Pytest CI
@@ -37,7 +33,7 @@ jobs:
       run: docker compose version
 
     # ----------------------------------------
-    # Step 2.5: Cache Docker Layers
+    # Step 3: Cache Docker Layers
     # ----------------------------------------
     - name: Cache Docker Layers
       uses: actions/cache@v3
@@ -46,68 +42,51 @@ jobs:
         key: ${{ runner.os }}-docker-${{ github.sha }}
 
     # ----------------------------------------
-    # Step 3: Build and Start Selenium Grid
+    # Step 4: Build and Start Docker Containers
     # ----------------------------------------
-    - name: Build and Start Selenium Grid
-      run: docker compose up -d
+    - name: Build and Start Docker Compose
+      run: docker compose up --build -d
 
     # ----------------------------------------
-    # Step 4: Wait for Docker Healthchecks
-    # ----------------------------------------
-    - name: Wait for Selenium Grid healthcheck
-      run: |
-        echo "⏳ Waiting for selenium-hub healthcheck..."
-        RETRIES=12
-        for i in $(seq 1 $RETRIES); do
-          STATUS=$(docker inspect --format='{{json .State.Health.Status}}' selenium-hub || true)
-          if [[ "$STATUS" == '"healthy"' ]]; then
-            echo "✅ Selenium Grid is healthy!"
-            exit 0
-          fi
-          echo "🕒 Attempt $i/$RETRIES: Grid health status = $STATUS. Retrying in 5s..."
-          sleep 5
-        done
-        echo "❌ Selenium Grid did not become healthy in time."
-        exit 1
-
-    # ----------------------------------------
-    # Step 5: Run Selenium Tests and Capture Exit Code
+    # Step 5: Run Selenium Tests inside Docker
     # ----------------------------------------
     - name: Run Selenium Tests
       id: run_tests
       run: |
         echo "🚀 Running Selenium tests..."
         set +e  # Don't fail pipeline on test failures
-        docker compose exec tests pytest --alluredir=reports/allure-results
+        docker compose exec tests /bin/bash -c "./wait-for-grid.sh pytest -v --alluredir=reports/allure-results"
         TEST_EXIT_CODE=$?
         echo "Test Exit Code: $TEST_EXIT_CODE"
         echo "test_status=$TEST_EXIT_CODE" >> $GITHUB_ENV
         exit 0  # Always succeed here; we handle test failures separately
 
     # ----------------------------------------
-    # Step 6.1: Install Allure CLI
+    # Step 6: Install Allure CLI
     # ----------------------------------------
     - name: Install Allure CLI
       if: always()
       run: |
-        echo "⬇️ Downloading Allure CLI..."
-        curl -L -o allure-2.27.0.tgz https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
-        tar -zxvf allure-2.27.0.tgz
+        echo "⬇️ Installing Allure CLI..."
+        sudo apt-get update
+        sudo apt-get install -y openjdk-11-jre-headless wget unzip
+        wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+        tar -xvzf allure-2.27.0.tgz
         sudo mv allure-2.27.0 /opt/allure
         sudo ln -s /opt/allure/bin/allure /usr/bin/allure
         allure --version
 
     # ----------------------------------------
-    # Step 6.2: Generate Allure HTML Report
+    # Step 7: Generate Allure HTML Report
     # ----------------------------------------
     - name: Generate Allure HTML Report
       if: always()
       run: |
         sudo mkdir -p reports/allure-report
-        sudo allure generate reports/allure-results -o reports/allure-report --clean || echo "⚠️ Allure generation failed"
+        allure generate reports/allure-results -o reports/allure-report --clean || echo "⚠️ Allure generation failed"
 
     # ----------------------------------------
-    # Step 7: Upload Allure Results (Raw XML)
+    # Step 8: Upload Allure Results (Raw XML)
     # ----------------------------------------
     - name: Upload Allure Results
       if: always()
@@ -115,9 +94,10 @@ jobs:
       with:
         name: allure-results
         path: reports/allure-results/
+        if-no-files-found: ignore
 
     # ----------------------------------------
-    # Step 8: Upload Allure HTML Report
+    # Step 9: Upload Allure HTML Report
     # ----------------------------------------
     - name: Upload Allure HTML Report
       if: always()
@@ -125,9 +105,10 @@ jobs:
       with:
         name: allure-report
         path: reports/allure-report/
+        if-no-files-found: ignore
 
     # ----------------------------------------
-    # Step 9: Upload Screenshots
+    # Step 10: Upload Screenshots
     # ----------------------------------------
     - name: Upload Screenshots
       if: always()
@@ -135,9 +116,10 @@ jobs:
       with:
         name: screenshots
         path: reports/screenshots/
+        if-no-files-found: ignore
 
     # ----------------------------------------
-    # Step 10: Send Email Notification with Test Status
+    # Step 11: Send Email Notification
     # ----------------------------------------
     - name: Send Email Notification
       if: always()
@@ -170,8 +152,15 @@ jobs:
         from: ${{ secrets.EMAIL_USERNAME }}
 
     # ----------------------------------------
-    # Step 11: Fail Job if Build Errors (Optional)
+    # Step 12: Fail Job if Build Errors
     # ----------------------------------------
     - name: Fail Job if Build Errors
       if: failure()
       run: exit 1
+
+    # ----------------------------------------
+    # Step 13: Shutdown Docker Compose
+    # ----------------------------------------
+    - name: Stop Docker Compose
+      if: always()
+      run: docker compose down

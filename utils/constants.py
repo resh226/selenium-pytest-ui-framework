@@ -1,11 +1,9 @@
-# utils/constants.py- sets default timour for wait functions in wait_utils.py
-
 import os
 
 def get_default_timeout():
     try:
-        # Detect if running on Selenium Grid
-        IS_GRID = bool(os.getenv("GRID_URL"))
+        grid_url = os.getenv("GRID_URL", "http://selenium-hub:4444")
+        IS_GRID = "selenium-hub" in grid_url or "localhost" in grid_url or "4444" in grid_url
         timeout = 80 if IS_GRID else 40
         print(f"DEBUG: IS_GRID={IS_GRID}, timeout={timeout}")
         return timeout

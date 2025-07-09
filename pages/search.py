@@ -39,7 +39,8 @@ class DuckDuckGoSearchPage(BasePage):
            and waits explicitly for the search button/input to be interactable.this is done as step for CAPTHA
            prevention for anti bot detection when running in docker +Selenium grid
         """
-        IS_GRID = bool(os.getenv("GRID_URL"))
+        grid_url = os.getenv("GRID_URL", "http://selenium-hub:4444")
+        IS_GRID = "selenium-hub" in grid_url or "localhost" in grid_url or "4444" in grid_url
         TYPING_DELAY = random.uniform(0.05, 0.2) if IS_GRID and random.choice([True, False]) else 0  # No delay locally
         for char in phrase:
             search_input.send_keys(char)

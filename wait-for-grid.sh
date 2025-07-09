@@ -39,4 +39,4 @@ if [ $i -eq 60 ]; then
 fi
 
 echo "🚀 Starting pytest tests..."
-pytest --alluredir=/app/reports/allure-results
+exec "$@"

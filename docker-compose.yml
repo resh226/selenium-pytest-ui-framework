@@ -68,4 +68,10 @@ services:
       selenium-hub:
         condition: service_healthy
       chrome:
-        condition: service_started
+        condition: service_healthy
+      firefox:
+        condition: service_healthy
+    environment:
+      - GRID_URL=http://selenium-hub:4444
+    entrypoint: ["./wait-for-grid.sh"]
+    command: ["pytest", "-v", "--alluredir=/app/reports/allure-results"]
