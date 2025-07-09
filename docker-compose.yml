@@ -10,7 +10,11 @@ services:
     container_name: selenium-hub
     ports:
       - "4444:4444"
-    healthcheck:  # 🟢 Ensure Grid API is ready before nodes/tests depend on it
+    deploy:
+      resources:
+        limits:
+          memory: 1g  # 🔥 Limit Selenium Hub to 1 GB
+    healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4444/status"]
       interval: 10s
       timeout: 5s
@@ -19,6 +23,10 @@ services:
   chrome:
     image: selenium/node-chrome:4.19.1
     shm_size: 2gb  # 🛡 Prevent Chrome crashes in Docker
+    deploy:
+      resources:
+        limits:
+          memory: 1.5g  # 🔥 Limit Chrome node to 1.5 GB
     depends_on:
       selenium-hub:
         condition: service_healthy
@@ -26,14 +34,18 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-      - SE_NODE_MAX_SESSIONS=1  # 🏃 Limit 1 session per node
-      - SE_NODE_SESSION_TIMEOUT=300  # 🕒 Allow sessions up to 5 minutes
+      - SE_NODE_MAX_SESSIONS=1
+      - SE_NODE_SESSION_TIMEOUT=300
     volumes:
       - /dev/shm:/dev/shm
 
   firefox:
     image: selenium/node-firefox:4.19.1
     shm_size: 2gb  # 🛡 Prevent Firefox crashes in Docker
+    deploy:
+      resources:
+        limits:
+          memory: 1.5g  # 🔥 Limit Firefox node to 1.5 GB
     depends_on:
       selenium-hub:
         condition: service_healthy
@@ -41,23 +53,19 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-      - SE_NODE_MAX_SESSIONS=1  # 🏃 Limit 1 session per node
-      - SE_NODE_SESSION_TIMEOUT=300  # 🕒 Allow sessions up to 5 minutes
+      - SE_NODE_MAX_SESSIONS=1
+      - SE_NODE_SESSION_TIMEOUT=300
     volumes:
       - /dev/shm:/dev/shm
 
   tests:
     build: .
+    deploy:
+      resources:
+        limits:
+          memory: 1g  # 🔥 Limit test container to 1 GB
     depends_on:
       selenium-hub:
         condition: service_healthy
       chrome:
         condition: service_started
-      firefox:
-        condition: service_started
-    environment:
-      - GRID_URL=http://selenium-hub:4444  # 🔥 Removed /wd/hub (Selenium 4 doesn’t need it)
-      - HEADLESS=true
-    volumes:
-      - ./reports:/app/reports
-    user: root

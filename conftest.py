@@ -122,9 +122,7 @@ def browser(config):
 # SCREENSHOT HOOK
 # -----------------------------------------------------------------------------
 base_reports_dir = os.path.join(os.getcwd(), "reports", "screenshots")
-passed_dir = os.path.join(base_reports_dir, "passed")
 failed_dir = os.path.join(base_reports_dir, "failed")
-os.makedirs(passed_dir, exist_ok=True)
 os.makedirs(failed_dir, exist_ok=True)
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -132,22 +130,21 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
 
-    if report.when == "call":
+    if report.when == "call" and report.outcome == "failed":
         browser = item.funcargs.get("browser", None)
         if browser:
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             test_name = report.nodeid.replace("::", "_").replace("/", "_")
             screenshot_name = f"{test_name}_{timestamp}.png"
-            folder = failed_dir if report.outcome == "failed" else passed_dir
-            screenshot_path = os.path.join(folder, screenshot_name)
+            screenshot_path = os.path.join(failed_dir, screenshot_name)
             try:
                 browser.save_screenshot(screenshot_path)
                 allure.attach.file(
                     screenshot_path,
-                    name=f"{test_name}_{report.outcome}",
+                    name=f"{test_name}_FAILED",
                     attachment_type=allure.attachment_type.PNG
                 )
-                print(f"📸 Screenshot saved: {screenshot_path} (Test {report.outcome.upper()})")
+                print(f"📸 Screenshot saved for FAILED test: {screenshot_path}")
             except WebDriverException as e:
                 if "invalid session id" in str(e).lower():
                     print("⚠️ Browser session ended before screenshot could be taken.")
