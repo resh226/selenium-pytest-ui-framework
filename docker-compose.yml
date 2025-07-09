@@ -1,8 +1,11 @@
 # ------------------------------------------------------------------------------
-# docker-compose.yml
+# docker-compose.yml (Updated for Host Sync and CI/CD)
 # ------------------------------------------------------------------------------
-# Spins up Selenium Grid and test automation container
+# Spins up Selenium Grid, browser nodes, and test automation container
+# Syncs ./reports folder between host and test container for Allure & screenshots
 # ------------------------------------------------------------------------------
+
+version: "3.8"
 
 services:
   selenium-hub:
@@ -85,3 +88,5 @@ services:
       - GRID_URL=http://selenium-hub:4444
     entrypoint: ["./wait-for-grid.sh"]
     command: ["pytest", "-v", "--alluredir=/app/reports/allure-results"]
+    volumes:
+      - ./reports:/app/reports  # ✅ Sync reports folder with host
