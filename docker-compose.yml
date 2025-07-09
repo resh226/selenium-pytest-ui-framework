@@ -38,6 +38,11 @@ services:
       - SE_NODE_SESSION_TIMEOUT=300
     volumes:
       - /dev/shm:/dev/shm
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5555/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
 
   firefox:
     image: selenium/node-firefox:4.19.1
@@ -57,6 +62,11 @@ services:
       - SE_NODE_SESSION_TIMEOUT=300
     volumes:
       - /dev/shm:/dev/shm
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5555/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
 
   tests:
     build: .
