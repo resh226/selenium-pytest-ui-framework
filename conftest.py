@@ -60,10 +60,11 @@ def wait_for_grid(grid_url, timeout=60):
 def browser(config):
     browser_type = config['browser']
     wait_time = config['implicit_wait']
-    grid_url = os.getenv("GRID_URL", "http://selenium-hub:4444")
+    grid_url = os.getenv("GRID_URL", "")
 
     # Detect if running on Grid
-    IS_GRID = "selenium-hub" in grid_url or "localhost" in grid_url or "4444" in grid_url
+    #IS_GRID = "selenium-hub" in grid_url or "localhost" in grid_url or "4444" in grid_url
+    IS_GRID = bool(grid_url)
     print(f"🌐 Running on {'Selenium Grid' if IS_GRID else 'Local WebDriver'}")
 
     if IS_GRID:
