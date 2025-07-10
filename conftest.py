@@ -56,8 +56,11 @@ def wait_for_grid(grid_url, timeout=60):
 # -----------------------------------------------------------------------------
 # BROWSER FIXTURE
 # -----------------------------------------------------------------------------
-@pytest.fixture(scope="session")
+
+scope_value = "function" if os.getenv("PARALLEL", "False").lower() == "true" else "session"
+@pytest.fixture(scope=scope_value)
 def browser(config):
+    print(f"scope is {scope_value}")
     browser_type = config['browser']
     wait_time = config['implicit_wait']
     grid_url = os.getenv("GRID_URL", "")

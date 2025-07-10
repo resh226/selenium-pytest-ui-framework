@@ -313,10 +313,11 @@ jobs:
         continue-on-error: true
         run: |
           echo "🔄 Running all tests in parallel..."
-          pytest -n 2 --dist=loadfile --reruns 2 --reruns-delay 3 --alluredir=reports/allure-results
+          pytest -n 2 --dist=loadfile --reruns 3 --reruns-delay 4 --maxfail=5 --alluredir=reports/allure-results
         env:
           GRID_URL: ""
           PYTHONUNBUFFERED: 1
+          PARALLEL: "True"
       - name: Generate Allure HTML Report
         if: always()
         run: |
