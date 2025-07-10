@@ -12,6 +12,7 @@ jobs:
   marker-and-parallel-tests:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           # Sequential runs per marker
