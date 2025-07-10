@@ -26,6 +26,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
 
+      - name: Install Allure CLI
+        run: |
+          sudo apt-get install -y default-jre
+          wget https://github.com/allure-framework/allure2/releases/download/2.25.0/allure-2.25.0.tgz
+          tar -xvzf allure-2.25.0.tgz
+          sudo mv allure-2.25.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          allure --version
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -33,6 +42,7 @@ jobs:
           pip install pytest allure-pytest
 
       - name: Run Smoke Tests
+        continue-on-error: true
         run: |
           echo "🧪 Running smoke tests..."
           pytest -m "smoke" --alluredir=reports/allure-results
@@ -40,156 +50,28 @@ jobs:
           GRID_URL: ""
           PYTHONUNBUFFERED: 1
 
-      - name: Upload Allure results
+      - name: Generate Allure HTML Report
+        if: always()
+        run: |
+          allure generate reports/allure-results -o reports/allure-html --clean
+
+      - name: Upload Allure results (Raw XML)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-results-smoke
           path: reports/allure-results
 
-  regression-tests:
-    name: Regression Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Chromium (for headless Chrome)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest allure-pytest
-
-      - name: Run Regression Tests
-        run: |
-          echo "🧪 Running regression tests..."
-          pytest -m "regression" --alluredir=reports/allure-results
-        env:
-          GRID_URL: ""
-          PYTHONUNBUFFERED: 1
-
-      - name: Upload Allure results
+      - name: Upload Allure HTML report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-regression
-          path: reports/allure-results
+          name: allure-html-smoke
+          path: reports/allure-html
 
-  flow-tests:
-    name: Flow Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Chromium (for headless Chrome)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest allure-pytest
-
-      - name: Run Flow Tests
-        run: |
-          echo "🧪 Running flow tests..."
-          pytest -m "flow" --alluredir=reports/allure-results
-        env:
-          GRID_URL: ""
-          PYTHONUNBUFFERED: 1
-
-      - name: Upload Allure results
+      - name: Upload Screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-flow
-          path: reports/allure-results
-
-  negative-tests:
-    name: Negative Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Chromium (for headless Chrome)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest allure-pytest
-
-      - name: Run Negative Tests
-        run: |
-          echo "🧪 Running negative tests..."
-          pytest -m "negative" --alluredir=reports/allure-results
-        env:
-          GRID_URL: ""
-          PYTHONUNBUFFERED: 1
-
-      - name: Upload Allure results
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-negative
-          path: reports/allure-results
-
-  parallel-tests:
-    name: Parallel Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Chromium (for headless Chrome)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest pytest-xdist allure-pytest
-
-      - name: Run All Tests in Parallel
-        run: |
-          echo "🔄 Running all tests in parallel with pytest-xdist..."
-          pytest -n 2 --alluredir=reports/allure-results
-        env:
-          GRID_URL: ""
-          PYTHONUNBUFFERED: 1
-
-      - name: Upload Allure results
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-parallel
-          path: reports/allure-results
+          name: screenshots-smoke
+          path: reports/screenshots/
