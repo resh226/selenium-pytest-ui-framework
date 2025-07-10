@@ -29,7 +29,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 @pytest.fixture(scope="session")
 def config():
     config = FileUtils.read_json('config/config.json')
-    assert config['browser'] in ['Chrome', 'Firefox', 'Headless Chrome'], "Unsupported browser type"
+    assert config['browser'] in ['Chrome', 'Firefox'], "Unsupported browser type"
     assert isinstance(config['implicit_wait'], int), "implicit_wait must be int"
     assert config['implicit_wait'] > 0, "implicit_wait must be > 0"
     assert 'base_url' in config and config['base_url'].strip(), "Missing or empty 'base_url'"
@@ -118,20 +118,25 @@ def browser(config):
     else:
         if browser_type == 'Chrome':
             options = ChromeOptions()
+            # Add headless and CI-safe flags
+            options.add_argument("--headless")
+            options.add_argument("--disable-gpu")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--window-size=1920,1080")
+            options.add_argument("--user-data-dir=/tmp/chrome-profile")
             service = ChromeService(ChromeDriverManager().install())
             b = selenium.webdriver.Chrome(service=service, options=options)
         elif browser_type == 'Firefox':
             options = FirefoxOptions()
-            service = FirefoxService(GeckoDriverManager().install())
-            b = selenium.webdriver.Firefox(service=service, options=options)
-        elif browser_type == 'Headless Chrome':
-            options = ChromeOptions()
-            options.add_argument("--headless=new")
+            # Add headless and CI-safe flags
+            options.add_argument("--headless")
             options.add_argument("--disable-gpu")
             options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
             options.add_argument("--window-size=1920,1080")
-            service = ChromeService(ChromeDriverManager().install())
-            b = selenium.webdriver.Chrome(service=service, options=options)
+            service = FirefoxService(GeckoDriverManager().install())
+            b = selenium.webdriver.Firefox(service=service, options=options)
         else:
             raise ValueError(f"Unsupported browser: {browser_type}")
 
