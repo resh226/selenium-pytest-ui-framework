@@ -75,3 +75,109 @@ jobs:
         with:
           name: screenshots-smoke
           path: reports/screenshots/
+
+  regression-tests:
+    name: Regression Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Chromium (for headless Chrome)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+      - name: Install Allure CLI
+        run: |
+          sudo apt-get install -y default-jre
+          wget https://github.com/allure-framework/allure2/releases/download/2.25.0/allure-2.25.0.tgz
+          tar -xvzf allure-2.25.0.tgz
+          sudo mv allure-2.25.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          allure --version
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest allure-pytest
+      - name: Run Regression Tests
+        continue-on-error: true
+        run: |
+          echo "🧪 Running regression tests..."
+          pytest -m "regression" --alluredir=reports/allure-results
+        env:
+          GRID_URL: ""
+          PYTHONUNBUFFERED: 1
+      - name: Generate Allure HTML Report
+        if: always()
+        run: |
+          allure generate reports/allure-results -o reports/allure-html --clean
+      - name: Upload Allure results (Raw XML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-regression
+          path: reports/allure-results
+      - name: Upload Allure HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-html-regression
+          path: reports/allure-html
+      - name: Upload Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-regression
+          path: reports/screenshots/
+
+  flow-tests:
+    name: Flow Tests
+    runs-on: ubuntu-latest
+    steps:
+      # Same as above, replace "smoke" with "flow" in pytest command and artifact names
+
+  negative-tests:
+    name: Negative Tests
+    runs-on: ubuntu-latest
+    steps:
+      # Same as above, replace "smoke" with "negative" in pytest command and artifact names
+
+  parallel-tests:
+    name: Parallel Tests
+    runs-on: ubuntu-latest
+    steps:
+      # Same setup as others
+      - name: Run Parallel Tests
+        continue-on-error: true
+        run: |
+          echo "🔄 Running all tests in parallel..."
+          pytest -n 2 --alluredir=reports/allure-results
+        env:
+          GRID_URL: ""
+          PYTHONUNBUFFERED: 1
+      - name: Generate Allure HTML Report
+        if: always()
+        run: |
+          allure generate reports/allure-results -o reports/allure-html --clean
+      - name: Upload Allure results (Raw XML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-parallel
+          path: reports/allure-results
+      - name: Upload Allure HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-html-parallel
+          path: reports/allure-html
+      - name: Upload Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-parallel
+          path: reports/screenshots/
