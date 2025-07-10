@@ -45,7 +45,7 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-xdist allure-pytest
 
-      # Step 4: Run Pytest
+      # Step 4: Run Pytest (Force Local WebDriver)
       - name: Run tests
         run: |
           echo "📝 Mode: ${{ matrix.mode }}, Marker: ${{ matrix.marker }}"
@@ -56,6 +56,9 @@ jobs:
             echo "🧪 Running marker: ${{ matrix.marker }} sequentially..."
             pytest -m "${{ matrix.marker }}" --alluredir=reports/allure-results
           fi
+        env:
+          GRID_URL: ""
+          PYTHONUNBUFFERED: 1
 
       # Step 5: Upload Allure results
       - name: Upload Allure results
