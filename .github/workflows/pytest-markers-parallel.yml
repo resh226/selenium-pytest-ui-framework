@@ -23,8 +23,6 @@ jobs:
             marker: flow
           - mode: sequential
             marker: negative
-          - mode: sequential
-            marker: critical
           # Parallel run for all tests
           - mode: parallel
             marker: all
