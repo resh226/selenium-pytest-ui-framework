@@ -73,9 +73,30 @@ jobs:
         sudo mv allure-2.27.0 /opt/allure
         sudo ln -s /opt/allure/bin/allure /usr/bin/allure
         allure --version
+        # ----------------------------------------
+
+    # Step 7: Add Executor Info for Allure
+    # ----------------------------------------
+    - name: Add Executor Info for Allure
+      if: always()
+      run: |
+        echo "📝 Adding Executor Info for Allure..."
+        mkdir -p ./reports/allure-results
+        cat <<EOF > ./reports/allure-results/executor.json
+        {
+          "name": "Docker-Selenium Grid",
+          "type": "Docker",
+          "buildName": "#${GITHUB_RUN_NUMBER}",
+          "buildUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}",
+          "reportUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts",
+          "reportName": "Allure Report - Docker Selenium Grid Pytest",
+          "url": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+        }
+        EOF
+
 
     # ----------------------------------------
-    # Step 7: Generate Allure HTML Report
+    # Step 8: Generate Allure HTML Report
     # ----------------------------------------
     - name: Generate Allure HTML Report
       if: always()
@@ -88,7 +109,7 @@ jobs:
         fi
 
     # ----------------------------------------
-    # Step 8: Upload Allure Results (Raw XML)
+    # Step 9: Upload Allure Results (Raw XML)
     # ----------------------------------------
     - name: Upload Allure Results
       if: always()
@@ -99,7 +120,7 @@ jobs:
         if-no-files-found: warn
 
     # ----------------------------------------
-    # Step 9: Upload Allure HTML Report
+    # Step 10: Upload Allure HTML Report
     # ----------------------------------------
     - name: Upload Allure HTML Report
       if: always()
@@ -110,7 +131,7 @@ jobs:
         if-no-files-found: warn
 
     # ----------------------------------------
-    # Step 10: Upload Screenshots
+    # Step 11: Upload Screenshots
     # ----------------------------------------
     - name: Upload Screenshots
       if: always()
@@ -121,7 +142,7 @@ jobs:
         if-no-files-found: warn
 
     # ----------------------------------------
-    # Step 11: Send Email Notification
+    # Step 12: Send Email Notification
     # ----------------------------------------
     - name: Send Email Notification
       if: always()
@@ -143,7 +164,7 @@ jobs:
 
           Regards,
           GitHub Actions
-        to: reshmasajeevpulickal@email.com
+        to: reshmasajeevpulickal@gmail.com
         from: ${{ secrets.EMAIL_USERNAME }}
 
     # ----------------------------------------
