@@ -78,24 +78,22 @@ jobs:
     # Step 7: Add Executor Info for Allure
     # ----------------------------------------
     - name: Add Executor Info for Allure
-      if: always()
       run: |
-        echo "📝 Adding Executor Info for Allure..."
-        mkdir -p ./reports/allure-results
-        cat <<EOF > ./reports/allure-results/executor.json
-        {
-          "name": "Docker-Selenium Grid",
-          "type": "Docker",
-          "buildName": "#${GITHUB_RUN_NUMBER}",
-          "buildUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}",
-          "reportUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts",
-          "reportName": "Allure Report - Docker Selenium Grid Pytest",
-          "url": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
-        }
-        EOF
+        docker compose exec tests /bin/bash -c "
+          mkdir -p /app/reports/allure-results &&
+          chmod -R 777 /app/reports/allure-results &&
+          echo '{
+            \"name\": \"GitHub Actions\",
+            \"type\": \"CI\",
+            \"buildName\": \"#${GITHUB_RUN_NUMBER}\",
+            \"buildUrl\": \"${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}\",
+            \"reportUrl\": \"${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts\",
+            \"reportName\": \"Allure Report - Selenium Pytest\",
+            \"url\": \"${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}\"
+          }' > /app/reports/allure-results/executor.json"
+      
 
-
-    # ----------------------------------------
+      # ----------------------------------------
     # Step 8: Generate Allure HTML Report
     # ----------------------------------------
     - name: Generate Allure HTML Report
