@@ -56,7 +56,10 @@ def wait_for_grid(grid_url, timeout=60):
 # -----------------------------------------------------------------------------
 # BROWSER FIXTURE
 # -----------------------------------------------------------------------------
-@pytest.fixture(scope="session")
+# Dynamically set scope based on environment
+scope_value = "function" if os.getenv('PARALLEL_RUN') == "true" else "session"
+
+@pytest.fixture(scope=scope_value)
 def browser(config):
     browser_type = config['browser']
     wait_time = config['implicit_wait']

@@ -317,7 +317,7 @@ jobs:
         env:
           GRID_URL: ""
           PYTHONUNBUFFERED: 1
-
+          PARALLEL_RUN: "true"
       - name: Generate Allure HTML Report
         if: always()
         run: |
