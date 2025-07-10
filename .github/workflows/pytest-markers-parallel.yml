@@ -9,61 +9,187 @@ on:
       - main
 
 jobs:
-  marker-and-parallel-tests:
+  smoke-tests:
+    name: Smoke Tests
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # Sequential runs per marker
-          - mode: sequential
-            marker: smoke
-          - mode: sequential
-            marker: regression
-          - mode: sequential
-            marker: flow
-          - mode: sequential
-            marker: negative
-          # Parallel run for all tests
-          - mode: parallel
-            marker: all
-
     steps:
-      # Step 1: Checkout Code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # Step 3: Install dependencies
+      - name: Install Chromium (for headless Chrome)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest allure-pytest
+
+      - name: Run Smoke Tests
+        run: |
+          echo "🧪 Running smoke tests..."
+          pytest -m "smoke" --alluredir=reports/allure-results
+        env:
+          GRID_URL: ""
+          PYTHONUNBUFFERED: 1
+
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-smoke
+          path: reports/allure-results
+
+  regression-tests:
+    name: Regression Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Chromium (for headless Chrome)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest allure-pytest
+
+      - name: Run Regression Tests
+        run: |
+          echo "🧪 Running regression tests..."
+          pytest -m "regression" --alluredir=reports/allure-results
+        env:
+          GRID_URL: ""
+          PYTHONUNBUFFERED: 1
+
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-regression
+          path: reports/allure-results
+
+  flow-tests:
+    name: Flow Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Chromium (for headless Chrome)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest allure-pytest
+
+      - name: Run Flow Tests
+        run: |
+          echo "🧪 Running flow tests..."
+          pytest -m "flow" --alluredir=reports/allure-results
+        env:
+          GRID_URL: ""
+          PYTHONUNBUFFERED: 1
+
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-flow
+          path: reports/allure-results
+
+  negative-tests:
+    name: Negative Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Chromium (for headless Chrome)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest allure-pytest
+
+      - name: Run Negative Tests
+        run: |
+          echo "🧪 Running negative tests..."
+          pytest -m "negative" --alluredir=reports/allure-results
+        env:
+          GRID_URL: ""
+          PYTHONUNBUFFERED: 1
+
+      - name: Upload Allure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-negative
+          path: reports/allure-results
+
+  parallel-tests:
+    name: Parallel Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Chromium (for headless Chrome)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-xdist allure-pytest
 
-      # Step 4: Run Pytest (Force Local WebDriver)
-      - name: Run tests
+      - name: Run All Tests in Parallel
         run: |
-          echo "📝 Mode: ${{ matrix.mode }}, Marker: ${{ matrix.marker }}"
-          if [ "${{ matrix.mode }}" = "parallel" ]; then
-            echo "🔄 Running all tests in parallel with pytest-xdist..."
-            pytest -n 2 --alluredir=reports/allure-results
-          else
-            echo "🧪 Running marker: ${{ matrix.marker }} sequentially..."
-            pytest -m "${{ matrix.marker }}" --alluredir=reports/allure-results
-          fi
+          echo "🔄 Running all tests in parallel with pytest-xdist..."
+          pytest -n 2 --alluredir=reports/allure-results
         env:
           GRID_URL: ""
           PYTHONUNBUFFERED: 1
 
-      # Step 5: Upload Allure results
       - name: Upload Allure results
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-${{ matrix.mode }}-${{ matrix.marker }}
+          name: allure-results-parallel
           path: reports/allure-results

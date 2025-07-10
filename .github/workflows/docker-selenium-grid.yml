@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 
 
-name: Selenium Pytest CI
+name: Docker-Selenium Grid CI
 
 on:
   push:
