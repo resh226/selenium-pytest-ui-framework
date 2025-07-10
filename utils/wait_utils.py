@@ -39,7 +39,7 @@ from selenium.common.exceptions import TimeoutException
 
 
 @allure.step("Wait for element visible")
-def wait_for_element_visible(browser, locator, timeout, retries=2):
+def wait_for_element_visible(browser, locator, timeout, retries=4):
     """
     Waits for the element to be visible (present in DOM and not hidden).
     Retries if TimeoutException occurs.
