@@ -11,6 +11,7 @@ class DuckDuckGoSearchLocators:
     Locators for the DuckDuckGo Search Page.
     """
     SEARCH_INPUT = (By.ID, "searchbox_input")
-    SEARCH_RESULTS = (By.CSS_SELECTOR, "ol.react-results--main li[data-layout='organic'] a") # Search result links
+    #SEARCH_RESULTS = (By.CSS_SELECTOR, "ol.react-results--main li[data-layout='organic'] a") # Search result links
+    SEARCH_RESULTS = (By.XPATH, "//li[@data-layout='organic']//a | //a[@data-testid='result-title-a']")
     LONG_QUERY_SEARCH_RESULT= (By.XPATH, "//p[contains(text(), 'Search query entered was too long')]")
     GIBBERISH_SEARCH_RESULT = (By.CSS_SELECTOR, "div.results--main")
