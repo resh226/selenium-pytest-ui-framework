@@ -50,6 +50,21 @@ jobs:
           GRID_URL: ""
           PYTHONUNBUFFERED: 1
 
+      - name: Add Executor Info for Allure
+        run: |
+          mkdir -p reports/allure-results
+          cat <<EOF > reports/allure-results/executor.json
+          {
+            "name": "GitHub Actions",
+            "type": "CI",
+            "buildName": "#${GITHUB_RUN_NUMBER}",
+            "buildUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}",
+            "reportUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts",
+            "reportName": "Allure Report - Selenium Pytest",
+            "url": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+          }
+          EOF 
+
       - name: Generate Allure HTML Report
         if: always()
         run: |
@@ -61,6 +76,7 @@ jobs:
         with:
           name: allure-results-smoke
           path: reports/allure-results
+          if-no-files-found: ignore
 
       - name: Upload Allure HTML report
         if: always()
@@ -68,6 +84,7 @@ jobs:
         with:
           name: allure-html-smoke
           path: reports/allure-html
+          if-no-files-found: ignore
 
       - name: Upload Screenshots
         if: always()
@@ -75,6 +92,7 @@ jobs:
         with:
           name: screenshots-smoke
           path: reports/screenshots/
+          if-no-files-found: ignore
 
   regression-tests:
     name: Regression Tests
@@ -117,6 +135,21 @@ jobs:
           GRID_URL: ""
           PYTHONUNBUFFERED: 1
 
+      - name: Add Executor Info for Allure
+        run: |
+          mkdir -p reports/allure-results
+          cat <<EOF > reports/allure-results/executor.json
+          {
+            "name": "GitHub Actions",
+            "type": "CI",
+            "buildName": "#${GITHUB_RUN_NUMBER}",
+            "buildUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}",
+            "reportUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts",
+            "reportName": "Allure Report - Selenium Pytest",
+            "url": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+          }
+          EOF 
+
       - name: Generate Allure HTML Report
         if: always()
         run: |
@@ -128,6 +161,7 @@ jobs:
         with:
           name: allure-results-regression
           path: reports/allure-results
+          if-no-files-found: ignore
 
       - name: Upload Allure HTML report
         if: always()
@@ -135,6 +169,7 @@ jobs:
         with:
           name: allure-html-regression
           path: reports/allure-html
+          if-no-files-found: ignore
 
       - name: Upload Screenshots
         if: always()
@@ -142,6 +177,7 @@ jobs:
         with:
           name: screenshots-regression
           path: reports/screenshots/
+          if-no-files-found: ignore
 
   flow-tests:
     name: Flow Tests
@@ -184,6 +220,21 @@ jobs:
           GRID_URL: ""
           PYTHONUNBUFFERED: 1
 
+      - name: Add Executor Info for Allure
+        run: |
+          mkdir -p reports/allure-results
+          cat <<EOF > reports/allure-results/executor.json
+          {
+            "name": "GitHub Actions",
+            "type": "CI",
+            "buildName": "#${GITHUB_RUN_NUMBER}",
+            "buildUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}",
+            "reportUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts",
+            "reportName": "Allure Report - Selenium Pytest",
+            "url": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+          }
+          EOF 
+
       - name: Generate Allure HTML Report
         if: always()
         run: |
@@ -195,6 +246,7 @@ jobs:
         with:
           name: allure-results-flow
           path: reports/allure-results
+          if-no-files-found: ignore
 
       - name: Upload Allure HTML report
         if: always()
@@ -202,6 +254,7 @@ jobs:
         with:
           name: allure-html-flow
           path: reports/allure-html
+          if-no-files-found: ignore
 
       - name: Upload Screenshots
         if: always()
@@ -209,6 +262,7 @@ jobs:
         with:
           name: screenshots-flow
           path: reports/screenshots/
+          if-no-files-found: ignore
 
   negative-tests:
     name: Negative Tests
@@ -251,6 +305,21 @@ jobs:
           GRID_URL: ""
           PYTHONUNBUFFERED: 1
 
+      - name: Add Executor Info for Allure
+        run: |
+          mkdir -p reports/allure-results
+          cat <<EOF > reports/allure-results/executor.json
+          {
+            "name": "GitHub Actions",
+            "type": "CI",
+            "buildName": "#${GITHUB_RUN_NUMBER}",
+            "buildUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}",
+            "reportUrl": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts",
+            "reportName": "Allure Report - Selenium Pytest",
+            "url": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+          }
+          EOF 
+
       - name: Generate Allure HTML Report
         if: always()
         run: |
@@ -262,6 +331,7 @@ jobs:
         with:
           name: allure-results-negative
           path: reports/allure-results
+          if-no-files-found: ignore
 
       - name: Upload Allure HTML report
         if: always()
@@ -269,6 +339,7 @@ jobs:
         with:
           name: allure-html-negative
           path: reports/allure-html
+          if-no-files-found: ignore
 
       - name: Upload Screenshots
         if: always()
@@ -276,6 +347,7 @@ jobs:
         with:
           name: screenshots-negative
           path: reports/screenshots/
+          if-no-files-found: ignore
 
   parallel-tests:
     name: Parallel Tests
@@ -361,4 +433,5 @@ jobs:
         with:
           name: screenshots-parallel
           path: reports/screenshots/
+          if-no-files-found: ignore
           if-no-files-found: ignore
