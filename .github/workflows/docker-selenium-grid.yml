@@ -1,6 +1,8 @@
 # -----------------------------------------------------------------------------
 # Selenium Pytest CI Workflow (Final - Host Sync for Allure & Artifacts)
 # -----------------------------------------------------------------------------
+
+
 name: Selenium Pytest CI
 
 on:
