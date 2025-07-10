@@ -91,6 +91,19 @@ jobs:
             \"reportName\": \"Allure Report - Selenium Pytest\",
             \"url\": \"${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}\"
           }' > /app/reports/allure-results/executor.json"
+
+    # ----------------------------------------
+    # Step 7.5: Restore Allure History (NEW)
+    # ----------------------------------------
+    - name: Restore Allure History
+      if: always()
+      run: |
+        if [ -d "./reports/allure-report/history" ]; then
+          echo "📂 Restoring Allure history..."
+          cp -R ./reports/allure-report/history ./reports/allure-results/ || true
+        else
+          echo "⚠️ No previous history found. Starting fresh."
+        fi
       
 
       # ----------------------------------------
