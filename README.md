@@ -14,6 +14,7 @@ This is a **Selenium UI Automation Framework** using Python and Pytest. It suppo
 ✅ Rich Allure Reports with screenshots and logs
 ✅ Designed for Chrome browser testing in both local and CI environments
 ✅ Two CI/CD workflows: one using Dockerized Selenium Grid and one running directly without Docker
+✅ Email Notification of build runs when finished.
 ```
 *Note:* In CI, Dockerized Selenium Grid was used only for Chrome due to GitHub runner memory constraints. 
 
