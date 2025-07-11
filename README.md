@@ -59,27 +59,61 @@ This is a **Selenium UI Automation Framework** using Python and Pytest. It suppo
 ---
 
 ## 📂 Folder Structure
-
-```bash
+---
+```
 selenium-pytest-ui-framework/
 │
-├── config/                # Test configs (e.g., browser, implicit_wait)
-├── locators/              # Page locators
-├── pages/                 # POM classes (SearchPage, ResultPage)
-├── tests/                 # Organized tests (smoke, regression, flow)
-├── utils/                 # Helper utilities (waits, file ops, constants)
-├── reports/               # Allure results and HTML reports
-├── .github/workflows/     # CI/CD pipelines (docker & non-docker)
-├── Dockerfile             # Defines a custom Docker image to run the automation tests. Installs Python, dependencies, etc.
-├── docker-compose.yml     # Spins up Selenium Grid (Hub + Chrome node) and test container for CI execution.
-├── wait-for-grid.sh       # Bash script to wait until the Selenium Grid is fully ready before running tests in CI.
-├── requirements.txt       # Lists all Python dependencies (Selenium, Pytest, Allure, etc.) needed to run the framework.
-└── README.md              # Full documentation of the project: setup guide, workflows, debugging notes etc.
-```
+├── base/                              # Base page classes
+│   └── base_page.py                   # Parent class with common WebDriver methods
+│
+├── config/                            # Configuration files
+│   └── config.json                    # Holds browser type, waits, and other configs
+│
+├── locators/                          # Page locators (organized per page)
+│   ├── result_locators.py             # Locators for results page
+│   └── search_locators.py             # Locators for search page
+│
+├── pages/                             # Page Object Model classes
+│   ├── __init__.py                    # Marks directory as package
+│   ├── result.py                      # ResultPage class methods
+│   └── search.py                      # SearchPage class methods
+│
+├── reports/                           # Test execution reports
+│   ├── failure_testcase_screenshot_captured/  # Screenshots for failed test cases
+│   ├── Allure Report.PNG              # Saved Allure report screenshot
+│   └── screen_recording_20250711.mp4  # Video recording of test execution in CI
+│
+├── test_data/                         # Data-driven test cases in JSON
+│   ├── basic_cases.json               # Basic search test data
+│   ├── edge_cases.json                # Edge case test data
+│   ├── failure_cases.json             # Negative test data
+│   └── flow_cases.json                # Flow test data
+│
+├── tests/                             # Pytest test files
+│   ├── test_failure_scenarios.py      # Tests for negative cases
+│   ├── test_search_basic.py           # Tests for basic search
+│   ├── test_search_edge_cases.py      # Tests for edge cases
+│   └── test_search_flow.py            # Tests for flow scenarios
+│
+├── utils/                             # Utility modules
+│   ├── constants.py                   # Constants used across framework
+│   ├── file_utils.py                  # File operations (read/write JSON)
+│   └── wait_utils.py                  # Explicit wait utility methods
+│
+├── .github/workflows/                 # CI/CD workflow definitions
+│   ├── docker-selenium-grid.yml       # Workflow for Dockerized Grid run (Chrome only)
+│   └── pytest-markers-parallel.yml    # Workflow for marker-based parallel run
+│
+├── Dockerfile                         # Defines Docker image for running tests
+├── docker-compose.yml                 # Spins up Selenium Grid (Hub + Chrome node) for CI
+├── wait-for-grid.sh                   # Script to wait until Grid is ready
+├── requirements.txt                   # Python dependencies for framework
+└── README.md                          # Project documentation
 
+```
 ---
 
-📸 Allure Report Screenshot
+## 📸 Allure Report Screenshot
 
 Here’s a sample Allure Report generated from this framework:
 
@@ -97,7 +131,7 @@ Push to `main` branch to trigger workflows:
 ---
 ---
 
-📦 Prerequisites & Setup Steps to run in your Local
+## 📦 Prerequisites & Setup Steps to run in your Local
 
 Follow these steps to get the framework running from scratch:
 
@@ -262,7 +296,7 @@ Allure HTML Report
 * Debugging CI/CD memory issues on GitHub runners
 * Configurable browser setup via JSON file
 * Allure Reporting integration
-* Artifact management and caching in workflows
+* Artifact management
 
 ---
 
