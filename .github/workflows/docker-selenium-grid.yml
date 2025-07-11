@@ -101,9 +101,22 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: allure-history
-        path: ./reports/allure-report/history
+        path: ./reports/allure-results/history
 
       # ----------------------------------------
+      # Step 7.6 : Merge Restored Allure History
+      # ----------------------------------------
+    - name: Merge Restored Allure History
+      if: always()
+      run: |
+        if [ -d "./reports/allure-results/history" ]; then
+        echo "📂 Merging restored Allure history..."
+        else
+        echo "⚠️ No previous Allure history found. Starting fresh."
+        fi
+        
+        
+        # ----------------------------------------
     # Step 8: Generate Allure HTML Report
     # ----------------------------------------
     - name: Generate Allure HTML Report
