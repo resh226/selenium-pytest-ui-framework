@@ -126,11 +126,9 @@ ChromeDriver is auto-managed via WebDriverManager
 7️⃣ Configure Browser (Optional)
 ```
 Default browser is Chrome. To use Firefox, edit config/config.json:
-```
 {
   "browser": "Firefox"
 }
-```
 ```
 8️⃣ Run Tests
 ```
