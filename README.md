@@ -8,13 +8,13 @@
 ## 📖 Overview
 
 This is a **Selenium UI Automation Framework** using Python and Pytest. It supports:
-
+```
 ✅ Page Object Model (POM) for clean, maintainable code
 ✅ Parallel & marker-based test execution in GitHub Actions CI/CD
 ✅ Rich Allure Reports with screenshots and logs
 ✅ Designed for Chrome browser testing in both local and CI environments
 ✅ Two CI/CD workflows: one using Dockerized Selenium Grid and one running directly without Docker
-
+```
 *Note:* In CI, Dockerized Selenium Grid was used only for Chrome due to GitHub runner memory constraints. If desired, you can switch to Firefox by editing the `browser` value in `config/config.json` as Firefox (currently its set as Chrome).
 
 ---
@@ -194,12 +194,14 @@ Default is Chrome. Change to `Firefox` to run tests on Firefox locally or in CI.
 ### 📊 Generate Allure Report in local
 After running tests with --alluredir, generate the HTML report:
 
-```bash
+```
+bash
 allure generate reports/allure-results -o reports/allure-report --clean
 ```
 Serve it in browser:
 
-```bash
+```
+bash
 allure serve reports/allure-results
 ```
 ---
@@ -208,7 +210,7 @@ allure serve reports/allure-results
 
 ### 🚀 Workflow 1: Dockerized Selenium Grid
 🚀 Workflow 1 – Dockerized Selenium Grid (docker-selenium-grid.yml)
-
+```
 Pytest Runner
     ↓
 Docker Compose Up (in CI)
@@ -222,12 +224,10 @@ Test Execution
 Allure Results Generated
     ↓
 Allure HTML Report
-
+```
 ### ⚡ Workflow 2: Non-Docker Pytest Parallel Runs
-
-
 ⚡ Workflow 2 – Non-Docker (pytest-markers-parallel.yml)
-
+```
 Pytest Runner
     ↓
 Direct Browser Execution (Chrome Only)
@@ -237,7 +237,7 @@ Test Execution (Parallel by Markers)
 Allure Results Generated
     ↓
 Allure HTML Report
-
+```
 
 ---
 
@@ -262,15 +262,6 @@ Allure HTML Report
 * Configurable browser setup via JSON file
 * Allure Reporting integration
 * Artifact management and caching in workflows
-
----
-
-## 🌟 Future Improvements
-
-* Resolve local Docker setup issues for cross-browser testing
-* Integrate Jenkins pipeline
-* Add Playwright for API testing
-* Cloud Grid (BrowserStack/SauceLabs)
 
 ---
 
