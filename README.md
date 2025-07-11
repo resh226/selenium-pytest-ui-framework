@@ -15,22 +15,37 @@ This is a **Selenium UI Automation Framework** using Python and Pytest. It suppo
 ✅ Designed for Chrome browser testing in both local and CI environments
 ✅ Two CI/CD workflows: one using Dockerized Selenium Grid and one running directly without Docker
 
-*Note:* Local runs were performed using the Pytest framework **without Docker**, as Docker had setup issues locally. In CI, Dockerized Selenium Grid was used only for Chrome due to GitHub runner memory constraints.
+*Note:* In CI, Dockerized Selenium Grid was used only for Chrome due to GitHub runner memory constraints. If desired, you can switch to Firefox by editing the `browser` value in `config/config.json` as Firefox (currently its set as Chrome).
+
+---
+
+## 💻 Tech Stack
+
+| Technology         | Purpose                               |
+| ------------------ | ------------------------------------- |
+| Python 3.11        | Programming language                  |
+| Pytest             | Test framework                        |
+| Selenium WebDriver | Browser automation                    |
+| Allure             | Reporting with screenshots & metadata |
+| Docker             | Containerized Selenium Grid (CI only) |
+| GitHub Actions     | CI/CD pipelines (Docker & Non-Docker) |
+| pytest-xdist       | Parallel test execution               |
 
 ---
 
 ## 🏗 Framework Highlights
 
-| Feature                     | Details                                                                |
-| --------------------------- | ---------------------------------------------------------------------- |
-| **Page Object Model (POM)** | Encapsulated locators & actions in `pages/` for reusability            |
-| **Fixtures & Scopes**       | Session & function scoped fixtures for setup/teardown in `conftest.py` |
-| **Explicit Waits**          | `utils/wait_utils.py` handles dynamic elements reliably                |
-| **Markers**                 | `@pytest.mark.smoke`, `@pytest.mark.regression`, `@pytest.mark.flow`   |
-| **Parallel Execution**      | `pytest-xdist` enabled multi-core runs                                 |
-| **Pytest Hooks**            | Screenshots on test pass/fail, Allure step logging                     |
-| **Allure Reporting**        | Full HTML reports with screenshots and metadata                        |
-| **CI/CD Workflows**         | Dockerized Grid (Chrome-only) and non-Docker workflows                 |
+| Feature                     | Details                                                                                       |
+| --------------------------- | --------------------------------------------------------------------------------------------- |
+| **Page Object Model (POM)** | Encapsulated locators & actions in `pages/` for reusability                                   |
+| **Fixtures & Scopes**       | Session & function scoped fixtures for setup/teardown in `conftest.py`                        |
+| **Explicit Waits**          | `utils/wait_utils.py` handles dynamic elements reliably                                       |
+| **Markers**                 | `@pytest.mark.smoke`, `@pytest.mark.regression`, `@pytest.mark.flow`, `@pytest.mark.negative` |
+| **Parallel Execution**      | `pytest-xdist` enabled multi-core runs                                                        |
+| **Pytest Hooks**            | Screenshots on test pass/fail, Allure step logging                                            |
+| **Allure Reporting**        | Full HTML reports with screenshots and metadata                                               |
+| **CI/CD Workflows**         | Dockerized Grid (Chrome-only) and non-Docker workflows                                        |
+| **Configurable Browser**    | `config/config.json` allows switching between Chrome and Firefox                              |
 
 ---
 
@@ -48,96 +63,156 @@ This is a **Selenium UI Automation Framework** using Python and Pytest. It suppo
 ```bash
 selenium-pytest-ui-framework/
 │
-├── config/                # Test configs (e.g., implicit_wait, browser settings)
+├── config/                # Test configs (e.g., browser, implicit_wait)
 ├── locators/              # Page locators
 ├── pages/                 # POM classes (SearchPage, ResultPage)
 ├── tests/                 # Organized tests (smoke, regression, flow)
 ├── utils/                 # Helper utilities (waits, file ops, constants)
 ├── reports/               # Allure results and HTML reports
 ├── .github/workflows/     # CI/CD pipelines (docker & non-docker)
-├── Dockerfile
-├── docker-compose.yml
-├── wait-for-grid.sh
-├── requirements.txt
-└── README.md
+├── Dockerfile             # Defines a custom Docker image to run the automation tests. Installs Python, dependencies, etc.
+├── docker-compose.yml     # Spins up Selenium Grid (Hub + Chrome node) and test container for CI execution.
+├── wait-for-grid.sh       # Bash script to wait until the Selenium Grid is fully ready before running tests in CI.
+├── requirements.txt       # Lists all Python dependencies (Selenium, Pytest, Allure, etc.) needed to run the framework.
+└── README.md              # Full documentation of the project: setup guide, workflows, debugging notes etc.
 ```
 
 ---
 
-## 🖼️ Test Flow Diagram
-```
-🚀 Workflow 1 – Dockerized Selenium Grid (docker-selenium-grid.yml)
-
-Pytest Runner
-    ↓
-Docker Compose Up (in CI)
-    ↓
-Selenium Grid Hub
-    ↓
-Chrome Node (Only)
-    ↓
-Test Execution
-    ↓
-Allure Results Generated
-    ↓
-Allure HTML Report
-```
-
-```
-
-⚡ Workflow 2 – Non-Docker (pytest-markers-parallel.yml)
-
-Pytest Runner
-    ↓
-Direct Browser Execution (Chrome Only)
-    ↓
-Test Execution (Parallel by Markers)
-    ↓
-Allure Results Generated
-    ↓
-Allure HTML Report
-
-```
-
----
-
-## 🐳 Docker & CI/CD Highlights
-
-### 🚀 Docker Compose (CI Only)
-
-* Hub + Chrome node defined in `docker-compose.yml`
-* Healthcheck logic with retries via `wait-for-grid.sh`
-
-### 📦 GitHub Actions Workflows
-
-* **docker-selenium-grid.yml** → Sequential Docker Grid runs (Chrome only)
-* **pytest-markers-parallel.yml** → Parallel marker-based runs (non-Docker)
-* Allure reports & screenshots uploaded as artifacts
-* Docker layer caching for faster builds
-
----
-
-## 🛠 Setup Instructions
-
-### 🖥 Run Locally (Non-Docker)
-
-```bash
-# Create virtualenv & install dependencies
-pip install -r requirements.txt
-
-# Run tests
-pytest -m smoke
-
-# View Allure Report
-allure serve reports/allure-results
-```
-
-### 🌐 Run in CI/CD
+## 🌐 Run in CI/CD
 
 Push to `main` branch to trigger workflows:
 
-* Sequential Docker Grid: docker-selenium-grid.yml
-* Parallel Non-Docker: pytest-markers-parallel.yml
+* **docker-selenium-grid.yml** → Sequential Docker Grid runs (Chrome only)
+* **pytest-markers-parallel.yml** → Parallel marker-based runs (non-Docker)
+
+---
+---
+
+📦 Prerequisites & Setup Steps to run in your Local
+
+Follow these steps to get the framework running from scratch:
+
+1️⃣ Clone the Repository
+```
+git clone https://github.com/<username>/<repo>.git
+cd <repo>
+```
+2️⃣ Install Python (Required)
+```
+Make sure Python 3.11 is installed. This project requires Python.
+Download from python.org
+Ensure python and pip are added to your PATH.
+```
+3️⃣ Install Project Dependencies
+```
+pip install -r requirements.txt
+(This will install all necessary libraries, including Selenium, Pytest, Allure-pytest plugin, etc.)
+```
+4️⃣ Install Allure Commandline (CLI)
+```
+Download Allure from Allure Releases
+Extract and place it in your project folder or any location
+Add the bin folder path (e.g., C:\path\to\allure-2.xx.x\bin) to your System Environment Variables > PATH
+Restart terminal or IDE.
+Verify installation:
+allure --version
+```
+5️⃣ Install Google Chrome (Latest)
+```
+Download from Google Chrome
+ChromeDriver is auto-managed via WebDriverManager
+```
+7️⃣ Configure Browser (Optional)
+```
+Default browser is Chrome. To use Firefox, edit config/config.json:
+```
+{
+  "browser": "Firefox"
+}
+```
+```
+8️⃣ Run Tests
+```
+See the section below for commands to execute tests and generate reports.
+```
+---
+---
+
+## 🖥 Running Tests Locally (Non-Docker)
+
+### 🔥 Running All Tests
+
+```bash
+pytest --alluredir=reports/allure-results
+```
+
+### 🏷 Running by Markers
+
+#### Smoke Tests
+
+```bash
+pytest -m smoke --alluredir=reports/allure-results
+```
+
+#### Regression Tests
+
+```bash
+pytest -m regression --alluredir=reports/allure-results
+```
+
+#### Flow Tests
+
+```bash
+pytest -m flow --alluredir=reports/allure-results
+```
+
+#### Negative Tests
+
+```bash
+pytest -m negative --alluredir=reports/allure-results
+```
+
+### ⚡ Running Tests in Parallel
+
+```bash
+pytest -n 2 --alluredir=reports/allure-results  # Run tests with 2 parallel workers
+```
+
+### 🌐 Switch Browser (Chrome/Firefox)
+
+Edit `config/config.json`:
+
+```json
+{
+  "browser": "Firefox"
+}
+```
+Default is Chrome. Change to `Firefox` to run tests on Firefox locally or in CI.
+
+---
+### 📊 Generate Allure Report in local
+After running tests with --alluredir, generate the HTML report:
+
+```bash
+allure generate reports/allure-results -o reports/allure-report --clean
+```
+Serve it in browser:
+
+```bash
+allure serve reports/allure-results
+```
+---
+
+## 🖼️ Test Flow Diagrams
+
+### 🚀 Workflow 1: Dockerized Selenium Grid
+
+![Docker Workflow](https://raw.githubusercontent.com/<username>/<repo>/main/docs/docker_workflow_diagram.png)
+
+### ⚡ Workflow 2: Non-Docker Pytest Parallel Runs
+
+![Non-Docker Workflow](https://raw.githubusercontent.com/<username>/<repo>/main/docs/non_docker_workflow_diagram.png)
 
 ---
 
@@ -150,12 +225,7 @@ Push to `main` branch to trigger workflows:
 | GitHub Runner OOM (7GB limit)  | Reduced Hub/node memory, limited parallel workers       |
 | Large Allure artifacts         | Synced reports via Docker volume mapping                |
 | Flaky tests on Grid            | Added explicit waits and retry logic in `wait_utils.py` |
-
----
-
-## 📸 Allure Report (GIF)
-
-![Allure Report Demo](https://github.com/<username>/<repo>/assets/allure-report-demo.gif)
+| Docker local issues            | Avoided Docker locally due to resource constraints      |
 
 ---
 
@@ -164,6 +234,7 @@ Push to `main` branch to trigger workflows:
 * Advanced Pytest (markers, fixtures, hooks, parallel runs)
 * Dockerized Selenium Grid (Chrome-only, CI optimized)
 * Debugging CI/CD memory issues on GitHub runners
+* Configurable browser setup via JSON file
 * Allure Reporting integration
 * Artifact management and caching in workflows
 
@@ -178,15 +249,6 @@ Push to `main` branch to trigger workflows:
 
 ---
 
-## 👩‍💻 Quick Recap for Interviews
-
-* Framework: POM, fixtures, explicit waits, hooks, markers
-* Docker: Hub + Chrome node (CI only), healthcheck
-* CI/CD: Dockerized and non-Docker workflows, artifacts, caching
-* Debugging: Solved Grid issues, memory limits, flaky tests
-
----
-
 ## 🏷 Badges
 
 ![Sequential Workflow](https://github.com/<username>/<repo>/actions/workflows/docker-selenium-grid.yml/badge.svg)
@@ -195,5 +257,4 @@ Push to `main` branch to trigger workflows:
 (Replace `<username>` and `<repo>` with your GitHub details)
 
 ---
-
 
