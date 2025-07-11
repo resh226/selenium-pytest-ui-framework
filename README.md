@@ -66,15 +66,34 @@ selenium-pytest-ui-framework/
 
 ## 🖼️ Test Flow Diagram
 
-```mermaid
-graph TD;
-    A[Pytest Runner] --> B[Test Execution in Local]
-    A --> C[Docker Compose Up (CI Only)]
-    C --> D[Selenium Grid Hub]
-    D --> E[Chrome Node]
-    E --> F[Test Execution]
-    F --> G[Allure Results Generated]
-    G --> H[Allure Report HTML]
+🚀 Workflow 1 – Dockerized Selenium Grid (docker-selenium-grid.yml)
+
+Pytest Runner
+    ↓
+Docker Compose Up (in CI)
+    ↓
+Selenium Grid Hub
+    ↓
+Chrome Node (Only)
+    ↓
+Test Execution
+    ↓
+Allure Results Generated
+    ↓
+Allure HTML Report
+
+⚡ Workflow 2 – Non-Docker (pytest-markers-parallel.yml)
+
+Pytest Runner
+    ↓
+Direct Browser Execution (Chrome Only)
+    ↓
+Test Execution (Parallel by Markers)
+    ↓
+Allure Results Generated
+    ↓
+Allure HTML Report
+
 ```
 
 ---
