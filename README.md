@@ -183,16 +183,17 @@ Follow these steps to get the framework running from scratch:
 git clone https://github.com/<username>/<repo>.git
 cd <repo>
 ```
-2️⃣ Install Python (Required)
+2️⃣ Install Python (Required) and PyCharm(IDE, if needed)
 ```
 Make sure Python 3.11 is installed. This project requires Python.
 Download from python.org
 Ensure python and pip are added to your PATH.
+I used PyCharm as IDE.
 ```
 3️⃣ Install Project Dependencies
 ```
 pip install -r requirements.txt
-(This will install all necessary libraries, including Selenium, Pytest, Allure-pytest plugin, etc.)
+(This will install all necessary libraries, including Selenium, Pytest, Allure-pytest plugin, etc.You can open Pycharm IDE and open the extracted zip file and in terminal run the commands)
 ```
 4️⃣ Install Allure Commandline (CLI)
 ```
