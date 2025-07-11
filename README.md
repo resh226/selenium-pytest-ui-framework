@@ -134,12 +134,13 @@ Push to `main` branch to trigger workflows:
 After a workflow run completes:
 1. Go to the Actions tab in your repository.
 2. Click on the latest workflow run (docker-selenium-grid.yml or pytest-markers-parallel.yml).
-3. Scroll down to the Artifacts section. 
+3. Scroll down to the Artifacts section.
+---
 Download:
 📊 allure-report.zip → Allure HTML report.
 📂 allure-results.zip → Raw Allure results (JSON, attachments) for local regeneration.
 📸 screenshots.zip → Captured screenshots for failed test cases.
-
+---
 ---
 ## 🖼️ Test Flow Diagrams of both workflows in GitHub CI/CD
 
