@@ -65,7 +65,7 @@ selenium-pytest-ui-framework/
 ---
 
 ## 🖼️ Test Flow Diagram
-
+```
 🚀 Workflow 1 – Dockerized Selenium Grid (docker-selenium-grid.yml)
 
 Pytest Runner
@@ -81,6 +81,9 @@ Test Execution
 Allure Results Generated
     ↓
 Allure HTML Report
+```
+
+```
 
 ⚡ Workflow 2 – Non-Docker (pytest-markers-parallel.yml)
 
