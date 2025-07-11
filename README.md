@@ -115,7 +115,7 @@ selenium-pytest-ui-framework/
 
 ## 📸 Allure Report Screenshot
 
-Here’s a sample Allure Report generated from this framework:
+Here’s a sample Allure Report generated:
 
 <img width="1484" height="756" alt="image" src="https://github.com/user-attachments/assets/5a747b5b-ba84-433c-af68-38f4b2e8b25a" />
 
