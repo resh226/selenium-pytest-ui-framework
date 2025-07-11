@@ -141,7 +141,7 @@ See the section below for commands to execute tests and generate reports.
 
 ### 🔥 Running All Tests
 
-```bash
+```
 pytest --alluredir=reports/allure-results
 ```
 
@@ -149,13 +149,13 @@ pytest --alluredir=reports/allure-results
 
 #### Smoke Tests
 
-```bash
+```
 pytest -m smoke --alluredir=reports/allure-results
 ```
 
 #### Regression Tests
 
-```bash
+```
 pytest -m regression --alluredir=reports/allure-results
 ```
 
@@ -167,13 +167,13 @@ pytest -m flow --alluredir=reports/allure-results
 
 #### Negative Tests
 
-```bash
+```
 pytest -m negative --alluredir=reports/allure-results
 ```
 
 ### ⚡ Running Tests in Parallel
 
-```bash
+```
 pytest -n 2 --alluredir=reports/allure-results  # Run tests with 2 parallel workers
 ```
 
@@ -193,21 +193,18 @@ Default is Chrome. Change to `Firefox` to run tests on Firefox locally or in CI.
 After running tests with --alluredir, generate the HTML report:
 
 ```
-bash
 allure generate reports/allure-results -o reports/allure-report --clean
 ```
 Serve it in browser:
 
 ```
-bash
 allure serve reports/allure-results
 ```
 ---
 
 ## 🖼️ Test Flow Diagrams
 
-### 🚀 Workflow 1: Dockerized Selenium Grid
-🚀 Workflow 1 – Dockerized Selenium Grid (docker-selenium-grid.yml)
+### 🚀 Workflow 1: Dockerized Selenium Grid (docker-selenium-grid.yml)
 ```
 Pytest Runner
     ↓
@@ -223,8 +220,7 @@ Allure Results Generated
     ↓
 Allure HTML Report
 ```
-### ⚡ Workflow 2: Non-Docker Pytest Parallel Runs
-⚡ Workflow 2 – Non-Docker (pytest-markers-parallel.yml)
+### ⚡ Workflow 2: Non-Docker Pytest Parallel Runs (pytest-markers-parallel.yml)
 ```
 Pytest Runner
     ↓
@@ -236,7 +232,6 @@ Allure Results Generated
     ↓
 Allure HTML Report
 ```
-
 ---
 
 ## 🪝 Debugging Notes & Fixes
