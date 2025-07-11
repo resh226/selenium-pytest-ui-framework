@@ -207,12 +207,37 @@ allure serve reports/allure-results
 ## 🖼️ Test Flow Diagrams
 
 ### 🚀 Workflow 1: Dockerized Selenium Grid
+🚀 Workflow 1 – Dockerized Selenium Grid (docker-selenium-grid.yml)
 
-![Docker Workflow](https://raw.githubusercontent.com/<username>/<repo>/main/docs/docker_workflow_diagram.png)
+Pytest Runner
+    ↓
+Docker Compose Up (in CI)
+    ↓
+Selenium Grid Hub
+    ↓
+Chrome Node (Only)
+    ↓
+Test Execution
+    ↓
+Allure Results Generated
+    ↓
+Allure HTML Report
 
 ### ⚡ Workflow 2: Non-Docker Pytest Parallel Runs
 
-![Non-Docker Workflow](https://raw.githubusercontent.com/<username>/<repo>/main/docs/non_docker_workflow_diagram.png)
+
+⚡ Workflow 2 – Non-Docker (pytest-markers-parallel.yml)
+
+Pytest Runner
+    ↓
+Direct Browser Execution (Chrome Only)
+    ↓
+Test Execution (Parallel by Markers)
+    ↓
+Allure Results Generated
+    ↓
+Allure HTML Report
+
 
 ---
 
