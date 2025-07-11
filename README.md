@@ -129,6 +129,37 @@ Push to `main` branch to trigger workflows:
 * **pytest-markers-parallel.yml** → Parallel marker-based runs (non-Docker)
 
 ---
+
+## 🖼️ Test Flow Diagrams of both workflows in GitHub CI/CD
+
+### 🚀 Workflow 1: Dockerized Selenium Grid (docker-selenium-grid.yml)
+```
+Pytest Runner
+    ↓
+Docker Compose Up (in CI)
+    ↓
+Selenium Grid Hub
+    ↓
+Chrome Node (Only)
+    ↓
+Test Execution
+    ↓
+Allure Results Generated
+    ↓
+Allure HTML Report
+```
+### ⚡ Workflow 2: Non-Docker Pytest Parallel Runs (pytest-markers-parallel.yml)
+```
+Pytest Runner
+    ↓
+Direct Browser Execution (Chrome Only)
+    ↓
+Test Execution (Parallel by Markers)
+    ↓
+Allure Results Generated
+    ↓
+Allure HTML Report
+```
 ---
 
 ## 📦 Prerequisites & Setup Steps to run in your Local
@@ -241,38 +272,6 @@ Serve it in browser:
 
 ```
 allure serve reports/allure-results
-```
----
-
-## 🖼️ Test Flow Diagrams
-
-### 🚀 Workflow 1: Dockerized Selenium Grid (docker-selenium-grid.yml)
-```
-Pytest Runner
-    ↓
-Docker Compose Up (in CI)
-    ↓
-Selenium Grid Hub
-    ↓
-Chrome Node (Only)
-    ↓
-Test Execution
-    ↓
-Allure Results Generated
-    ↓
-Allure HTML Report
-```
-### ⚡ Workflow 2: Non-Docker Pytest Parallel Runs (pytest-markers-parallel.yml)
-```
-Pytest Runner
-    ↓
-Direct Browser Execution (Chrome Only)
-    ↓
-Test Execution (Parallel by Markers)
-    ↓
-Allure Results Generated
-    ↓
-Allure HTML Report
 ```
 ---
 
