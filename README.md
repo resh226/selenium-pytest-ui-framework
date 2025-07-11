@@ -1,7 +1,7 @@
 # 🚀 Selenium Pytest UI Automation Framework
 
-![Sequential Workflow](https://github.com/<username>/<repo>/actions/workflows/docker-selenium-grid.yml/badge.svg)
-![Parallel Workflow](https://github.com/<username>/<repo>/actions/workflows/pytest-markers-parallel.yml/badge.svg)
+[![Docker-Selenium Grid CI](https://github.com/resh226/selenium-pytest-ui-framework/actions/workflows/docker-selenium-grid.yml/badge.svg)](https://github.com/resh226/selenium-pytest-ui-framework/actions/workflows/docker-selenium-grid.yml)
+[![Pytest Marker and Parallel Runs](https://github.com/resh226/selenium-pytest-ui-framework/actions/workflows/pytest-markers-parallel.yml/badge.svg)](https://github.com/resh226/selenium-pytest-ui-framework/actions/workflows/pytest-markers-parallel.yml)
 
 ---
 
