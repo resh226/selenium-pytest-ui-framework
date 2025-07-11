@@ -10,10 +10,12 @@
 This is a **Selenium UI Automation Framework** using Python and Pytest. It supports:
 
 ✅ Page Object Model (POM) for clean, maintainable code
-✅ Dockerized Selenium Grid for cross-browser testing
 ✅ Parallel & marker-based test execution in GitHub Actions CI/CD
 ✅ Rich Allure Reports with screenshots and logs
-✅ Easy scalability for real-world test suites
+✅ Designed for Chrome browser testing in both local and CI environments
+✅ Two CI/CD workflows: one using Dockerized Selenium Grid and one running directly without Docker
+
+*Note:* Local runs were performed using the Pytest framework **without Docker**, as Docker had setup issues locally. In CI, Dockerized Selenium Grid was used only for Chrome due to GitHub runner memory constraints.
 
 ---
 
@@ -28,8 +30,7 @@ This is a **Selenium UI Automation Framework** using Python and Pytest. It suppo
 | **Parallel Execution**      | `pytest-xdist` enabled multi-core runs                                 |
 | **Pytest Hooks**            | Screenshots on test pass/fail, Allure step logging                     |
 | **Allure Reporting**        | Full HTML reports with screenshots and metadata                        |
-| **Docker Integration**      | Selenium Grid (Hub + Chrome/Firefox nodes) via Docker Compose          |
-| **CI/CD Workflows**         | Sequential & Parallel runs in GitHub Actions with caching & artifacts  |
+| **CI/CD Workflows**         | Dockerized Grid (Chrome-only) and non-Docker workflows                 |
 
 ---
 
@@ -53,7 +54,7 @@ selenium-pytest-ui-framework/
 ├── tests/                 # Organized tests (smoke, regression, flow)
 ├── utils/                 # Helper utilities (waits, file ops, constants)
 ├── reports/               # Allure results and HTML reports
-├── .github/workflows/     # CI/CD pipelines (sequential & parallel)
+├── .github/workflows/     # CI/CD pipelines (docker & non-docker)
 ├── Dockerfile
 ├── docker-compose.yml
 ├── wait-for-grid.sh
@@ -67,28 +68,28 @@ selenium-pytest-ui-framework/
 
 ```mermaid
 graph TD;
-    A[Pytest Runner] --> B[Docker Compose Up]
-    B --> C[Selenium Grid Hub]
-    C --> D1[Chrome Node]
-    C --> D2[Firefox Node]
-    D1 & D2 --> E[Test Execution]
-    E --> F[Allure Results Generated]
-    F --> G[Allure Report HTML]
+    A[Pytest Runner] --> B[Test Execution in Local]
+    A --> C[Docker Compose Up (CI Only)]
+    C --> D[Selenium Grid Hub]
+    D --> E[Chrome Node]
+    E --> F[Test Execution]
+    F --> G[Allure Results Generated]
+    G --> H[Allure Report HTML]
 ```
 
 ---
 
 ## 🐳 Docker & CI/CD Highlights
 
-### 🚀 Docker Compose
+### 🚀 Docker Compose (CI Only)
 
-* Hub + Chrome/Firefox nodes defined in `docker-compose.yml`
+* Hub + Chrome node defined in `docker-compose.yml`
 * Healthcheck logic with retries via `wait-for-grid.sh`
 
 ### 📦 GitHub Actions Workflows
 
-* **docker-selenium-grid.yml** → Sequential Docker Grid runs
-* **pytest-markers-parallel.yml** → Parallel marker-based runs
+* **docker-selenium-grid.yml** → Sequential Docker Grid runs (Chrome only)
+* **pytest-markers-parallel.yml** → Parallel marker-based runs (non-Docker)
 * Allure reports & screenshots uploaded as artifacts
 * Docker layer caching for faster builds
 
@@ -96,7 +97,7 @@ graph TD;
 
 ## 🛠 Setup Instructions
 
-### 🖥 Run Locally
+### 🖥 Run Locally (Non-Docker)
 
 ```bash
 # Create virtualenv & install dependencies
@@ -109,25 +110,12 @@ pytest -m smoke
 allure serve reports/allure-results
 ```
 
-### 🐳 Run with Docker
-
-```bash
-# Start Selenium Grid
-docker-compose up -d
-
-# Run tests inside Docker
-pytest --browser Chrome
-
-# Stop Grid
-docker-compose down
-```
-
 ### 🌐 Run in CI/CD
 
 Push to `main` branch to trigger workflows:
 
-* Sequential: docker-selenium-grid.yml
-* Parallel: pytest-markers-parallel.yml
+* Sequential Docker Grid: docker-selenium-grid.yml
+* Parallel Non-Docker: pytest-markers-parallel.yml
 
 ---
 
@@ -152,7 +140,7 @@ Push to `main` branch to trigger workflows:
 ## 📋 What I Learned
 
 * Advanced Pytest (markers, fixtures, hooks, parallel runs)
-* Dockerized Selenium Grid with healthcheck
+* Dockerized Selenium Grid (Chrome-only, CI optimized)
 * Debugging CI/CD memory issues on GitHub runners
 * Allure Reporting integration
 * Artifact management and caching in workflows
@@ -161,6 +149,7 @@ Push to `main` branch to trigger workflows:
 
 ## 🌟 Future Improvements
 
+* Resolve local Docker setup issues for cross-browser testing
 * Integrate Jenkins pipeline
 * Add Playwright for API testing
 * Cloud Grid (BrowserStack/SauceLabs)
@@ -170,8 +159,8 @@ Push to `main` branch to trigger workflows:
 ## 👩‍💻 Quick Recap for Interviews
 
 * Framework: POM, fixtures, explicit waits, hooks, markers
-* Docker: Hub + Chrome/Firefox, healthcheck
-* CI/CD: Sequential & parallel workflows, artifacts, caching
+* Docker: Hub + Chrome node (CI only), healthcheck
+* CI/CD: Dockerized and non-Docker workflows, artifacts, caching
 * Debugging: Solved Grid issues, memory limits, flaky tests
 
 ---
@@ -184,4 +173,5 @@ Push to `main` branch to trigger workflows:
 (Replace `<username>` and `<repo>` with your GitHub details)
 
 ---
+
 
