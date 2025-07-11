@@ -93,18 +93,14 @@ jobs:
           }' > /app/reports/allure-results/executor.json"
 
     # ----------------------------------------
-    # Step 7.5: Restore Allure History (NEW)
+    # Step 7.5 : Download Previous Allure History
     # ----------------------------------------
-    - name: Restore Allure History
+    - name: Download Previous Allure History
       if: always()
-      run: |
-        if [ -d "./reports/allure-report/history" ]; then
-          echo "📂 Restoring Allure history..."
-          cp -R ./reports/allure-report/history ./reports/allure-results/ || true
-        else
-          echo "⚠️ No previous history found. Starting fresh."
-        fi
-      
+      uses: actions/download-artifact@v4
+      with:
+        name: allure-history
+        path: ./reports/allure-report/history
 
       # ----------------------------------------
     # Step 8: Generate Allure HTML Report
@@ -120,6 +116,17 @@ jobs:
         fi
 
     # ----------------------------------------
+    # Step 8.5: Upload Allure History
+    # ----------------------------------------
+    - name: Upload Allure History
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-history
+        path: ./reports/allure-report/history
+        if-no-files-found: ignore
+
+    # ----------------------------------------
     # Step 9: Upload Allure Results (Raw XML)
     # ----------------------------------------
     - name: Upload Allure Results
@@ -128,7 +135,7 @@ jobs:
       with:
         name: allure-results
         path: ./reports/allure-results/
-        if-no-files-found: warn
+        if-no-files-found: ignore
 
     # ----------------------------------------
     # Step 10: Upload Allure HTML Report
@@ -139,7 +146,7 @@ jobs:
       with:
         name: allure-report
         path: ./reports/allure-report/
-        if-no-files-found: warn
+        if-no-files-found: ignore
 
     # ----------------------------------------
     # Step 11: Upload Screenshots
@@ -150,7 +157,7 @@ jobs:
       with:
         name: screenshots
         path: ./reports/screenshots/
-        if-no-files-found: warn
+        if-no-files-found: ignore 
 
     # ----------------------------------------
     # Step 12: Send Email Notification
