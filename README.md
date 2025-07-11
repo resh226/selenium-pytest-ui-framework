@@ -15,7 +15,7 @@ This is a **Selenium UI Automation Framework** using Python and Pytest. It suppo
 ✅ Designed for Chrome browser testing in both local and CI environments
 ✅ Two CI/CD workflows: one using Dockerized Selenium Grid and one running directly without Docker
 ```
-*Note:* In CI, Dockerized Selenium Grid was used only for Chrome due to GitHub runner memory constraints. If desired, you can switch to Firefox by editing the `browser` value in `config/config.json` as Firefox (currently its set as Chrome).
+*Note:* In CI, Dockerized Selenium Grid was used only for Chrome due to GitHub runner memory constraints. 
 
 ---
 
