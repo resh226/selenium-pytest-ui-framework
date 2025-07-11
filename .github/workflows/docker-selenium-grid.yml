@@ -91,30 +91,6 @@ jobs:
             \"reportName\": \"Allure Report - Selenium Pytest\",
             \"url\": \"${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}\"
           }' > /app/reports/allure-results/executor.json"
-
-    # ----------------------------------------
-    # Step 7.5 : Download Previous Allure History
-    # ----------------------------------------
-    - name: Download Previous Allure History
-      if: always()
-      continue-on-error: true
-      uses: actions/download-artifact@v4
-      with:
-        name: allure-history
-        path: ./reports/allure-results/history
-
-      # ----------------------------------------
-      # Step 7.6 : Merge Restored Allure History
-      # ----------------------------------------
-    - name: Merge Restored Allure History
-      if: always()
-      run: |
-        if [ -d "./reports/allure-results/history" ]; then
-        echo "📂 Merging restored Allure history..."
-        else
-        echo "⚠️ No previous Allure history found. Starting fresh."
-        fi
-        
         
         # ----------------------------------------
     # Step 8: Generate Allure HTML Report
@@ -128,17 +104,6 @@ jobs:
         else
           echo "⚠️ No Allure results found. Skipping report generation."
         fi
-
-    # ----------------------------------------
-    # Step 8.5: Upload Allure History
-    # ----------------------------------------
-    - name: Upload Allure History
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: allure-history
-        path: ./reports/allure-report/history
-        if-no-files-found: ignore
 
     # ----------------------------------------
     # Step 9: Upload Allure Results (Raw XML)
