@@ -289,16 +289,14 @@ allure serve reports/allure-results
 ---
 
 ## 🪝 Debugging Notes & Fixes
-
-| Issue                          | Fix                                                     |
-| ------------------------------ | ------------------------------------------------------- |
-| `allure: not recognized`       | Used `allure.bat` or added Allure bin to PATH           |
-| Selenium Grid healthcheck fail | Added `wait-for-grid.sh` retry logic                    |
-| GitHub Runner OOM (7GB limit)  | Reduced Hub/node memory, limited parallel workers       |
-| Large Allure artifacts         | Synced reports via Docker volume mapping                |
-| Flaky tests on Grid            | Added explicit waits and retry logic in `wait_utils.py` |
-| Docker local issues            | Avoided Docker locally due to resource constraints      |
-
+```
+✅ Test failed initially due to race conditions between page load and assertions. Fixed by implementing explicit waits (WebDriverWait) instead of time.sleep and using EC.title_contains(phrase) to wait for title updates.
+✅ Verified search phrase input using manual observation and extracted values with get_attribute('value').
+✅ Browser not maximizing in some runs – added maximize_window() in conftest.py fixture setup.
+✅ Selenium Grid healthcheck failures in CI – resolved by adding wait-for-grid.sh retry logic.
+✅ GitHub Runner memory (7GB) limitation – reduced Hub/Node memory allocation and limited parallel workers.
+✅ Flaky tests on Grid – improved stability with additional explicit waits and retry logic in wait_utils.py.
+```
 ---
 
 ## 📋 What I Learned
@@ -320,4 +318,6 @@ allure serve reports/allure-results
 (Replace `<username>` and `<repo>` with your GitHub details)
 
 ---
+🙋‍♀️ About Me
 
+Reshma Sajeev🧪 ISTQB Certified | ✅ Postman Student Expert 🔗 https://www.linkedin.com/in/reshma-sajeev-889b7215b/ ⭐ This repository is part of my personal QA portfolio to demonstrate hands-on experience in Selenium UI Automation using Pytest Framework with Dockerized Selenium grid.
