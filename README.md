@@ -221,7 +221,6 @@ Default browser is Chrome. To use Firefox, edit config/config.json:
 See the section below for commands to execute tests and generate reports.
 ```
 ---
----
 
 ## 🖥 Running Tests Locally (Non-Docker)
 
