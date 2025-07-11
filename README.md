@@ -9,10 +9,14 @@
 
 This is a **Selenium UI Automation Framework** using Python and Pytest. It supports:
 ```
-✅ Page Object Model (POM) for clean, maintainable code
-✅ Parallel & marker-based test execution in GitHub Actions CI/CD
-✅ Rich Allure Reports with screenshots and logs
-✅ Designed for Chrome browser testing in both local and CI environments
+✅ Framework based on Python + Pytest Built from scratch
+✅ Page Object Model (POM) for clean and reusable code
+✅ Marker-based execution: smoke, regression, flow, negative
+✅ Parallel test execution using pytest-xdist ⚡
+✅ CI/CD pipelines with GitHub Actions – Dockerized and Non-Docker workflows
+✅ Rich Allure Reporting with screenshots and logs 📸
+✅ Screenshot capture on failure/pass using Pytest Hooks
+✅ Configurable browser support via config.json (Chrome/Firefox)
 ✅ Two CI/CD workflows: one using Dockerized Selenium Grid and one running directly without Docker
 ✅ Email Notification of build runs when finished.
 ```
