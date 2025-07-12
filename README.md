@@ -300,6 +300,7 @@ allure serve reports/allure-results
 ✅ Selenium Grid healthcheck failures in CI – resolved by adding wait-for-grid.sh retry logic.
 ✅ GitHub Runner memory (7GB) limitation – reduced Hub/Node memory allocation and limited parallel workers.
 ✅ Flaky tests on Grid – improved stability with additional explicit waits and retry logic in wait_utils.py.
+✅ CAPTCHA and antibot challenges in CI – mitigated by implementing user-agent randomization and adjusting request timing to mimic human behavior
 ```
 ---
 
